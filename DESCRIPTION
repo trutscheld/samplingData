@@ -1,13 +1,14 @@
-Package: SamplingDesign
+Package: samplingData
 Type: Package
 Title: Sampling data within different study designs
 Version: 1.0
 Date: 2016-10-05
-Author: Diana Trutschel
+Author: Diana Trutschel, Hendrik Treutler
 Maintainer: Diana Trutschel <Diana.Trutschel@dze.de>
 Description: sampling data from normal distributed data within different study designs
 License: GPL 2 (GNU General Public License Version 2)
 RoxygenNote: 5.0.1
+Imports: mvtnorm
 Suggests: knitr,
     rmarkdown
 VignetteBuilder: knitr

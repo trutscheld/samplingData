@@ -15,6 +15,8 @@
 #' K<-6  #measurement (or timepoints)
 #' I<-10 #Cluster
 #' J<-2 #number of subjects
+#' X<-designMatrix.SWD(nC=I, nT=K, nSw=2)
+#' D<-completeDataDesignMatrix(J, X)
 #' sigma.1<-0.1
 #' sigma.3<-0.9
 #' type<-"cross-sec"
@@ -28,6 +30,7 @@
 #' @export
 sampleData<-function(type, K,J,I, D, A=NULL, V, parameters ){
   
+  require("mvtnorm")
   if(is.null(A)){A<-D}
   #sample I cluster from distribution of cluster, each ave the same mean vector
   mean.vec<-A%*%parameters

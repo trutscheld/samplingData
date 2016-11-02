@@ -74,7 +74,7 @@ implemMatrix.SWD<-function(nC, nT, nSw, pattern){
 #'
 #' K<-6  #measurement (or timepoints)
 #' I<-10 #Cluster
-#' J<-2 number of subjects
+#' J<-2 #number of subjects
 #' X<-designMatrix.SWD(nC=I, nT=K, nSw=2)
 #' completeDataDesignMatrix(J, X)
 #' @export

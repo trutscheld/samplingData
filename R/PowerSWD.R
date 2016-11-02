@@ -16,8 +16,8 @@
 #' DM<-designMatrix.SWD(noCl,noT,switches)
 #' sigma.e <- 2
 #' sigma.alpha <- 2    
-#' calcPower.Hussey_SWD(ThetaEst=1,Design=DM, sigmaq=sigma.e^2, tauq=sigma.alpha^2, time=FALSE)
-#' calcPower.Hussey_SWD(ThetaEst=1,Design=DM, sigmaq=sigma.e^2, tauq=sigma.alpha^2, time=TRUE)
+#' calcPower.SWD(ThetaEst=1,Design=DM, sigmaq=sigma.e^2, tauq=sigma.alpha^2, time=FALSE)
+#' calcPower.SWD(ThetaEst=1,Design=DM, sigmaq=sigma.e^2, tauq=sigma.alpha^2, time=TRUE)
 #' @export
 
 calcPower.SWD<-function(ThetaEst,alpha=0.05, Design, sigmaq, sigma.2 =NULL, tauq, time){
