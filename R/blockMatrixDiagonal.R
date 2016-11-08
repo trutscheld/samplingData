@@ -1,7 +1,7 @@
 #' diagonal block matrix
 #'
 #' @description create a diagonal block matrix
-#' @param a list of matrices
+#' @param ... a list of matrices
 #' @return diagonal block matrix concatinated from this list of matrices
 #' @examples
 #' m1<-matrix(round(runif(4*4),1),nrow=4,ncol=4)

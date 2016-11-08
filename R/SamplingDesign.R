@@ -30,7 +30,7 @@
 #' @export
 sampleData<-function(type, K,J,I, D, A=NULL, V, parameters ){
   
-  require("mvtnorm")
+  library("mvtnorm")
   if(is.null(A)){A<-D}
   #sample I cluster from distribution of cluster, each ave the same mean vector
   mean.vec<-A%*%parameters

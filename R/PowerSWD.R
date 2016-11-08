@@ -5,6 +5,7 @@
 #' @param alpha singificance level (by default 0.05)
 #' @param Design design matrix for a given SWD model
 #' @param sigmaq within cluster variance
+#' @param sigma.2 power for cross-sectional
 #' @param tauq between cluster variance
 #' @param time a logical (FALSE, if no time trends are expected, otherwise TRUE)
 #' @return Aproximated power of two tailed test, although the design matrix is fractionated, then power is not valid
