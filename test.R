@@ -88,6 +88,52 @@ noT<-6
 switches<-2
 DM<-designMatrix.SWD(noCl,noT,switches)
 sigma.e <- 2
-sigma.alpha <- 2    
-calcPower.SWD(ThetaEst=1,Design=DM, sigmaq=sigma.e^2, tauq=sigma.alpha^2, time=FALSE)
-calcPower.SWD(ThetaEst=1,Design=DM, sigmaq=sigma.e^2, tauq=sigma.alpha^2, time=TRUE)
+sigma.alpha <- 2 
+clustersize<-10
+Theta<-1
+calcPower.SWD(ThetaEst=Theta,Design=DM, sigmaq=sigma.e^2/clustersize, tauq=sigma.alpha^2, time=FALSE)
+calcPower.SWD(ThetaEst=Theta,Design=DM, sigmaq=NULL, tauq=sigma.alpha^2, sigmaq.error =sigma.e^2, noSub=clustersize, time=FALSE)
+calcPower.SWD(ThetaEst=Theta,Design=DM, sigmaq=sigma.e^2/clustersize, tauq=sigma.alpha^2)
+calcPower.SWD(ThetaEst=Theta,Design=DM.new, sigmaq=sigma.e^2/clustersize, tauq=sigma.alpha^2)
+
+
+#Example Heo&Kim Table 1
+sigma.e <- sqrt(7/10)
+sigma <- sqrt(2/10)
+sigma.alpha <- sqrt(1/10 )
+
+###Table 1, 1 row
+delta<- 0.3# treatment effect
+rho.1<- 0.3#correlation among level 1 data
+(sigma^2+sigma.alpha^2)/(sigma.e^2+sigma^2+sigma.alpha^2)
+rho.2<- 0.1#correlation among level 2 data
+sigma.alpha^2/(sigma.e^2+sigma^2+sigma.alpha^2)
+K<- 5#number of participant within each period (each cell9)
+b<- 0#number of baseline measurements
+##fixed parameters
+c<-2# number of cluster in each step
+p<-2#number of periods within step
+S<-5 # number of steps
+sigma.quad<-1#gesamtvarianz
+(sigma.e^2+sigma^2+sigma.alpha^2)
+#calculate
+(J<-b+p*S) # total number of periods per cluster
+(f<-(1+(K-1)*rho.1-K*rho.2))
+(sumJs<-c*p*S*(S+1)*(p*(S-1)+3*b)/6)
+(Z<-qnorm(p=1-0.05/2))
+(Var.delta<-f*J*sigma.quad/(K*sumJs))
+pnorm(q=(delta/sqrt(Var.delta)-Z))#correct
+
+DM.new<-NULL
+for(i in 1:dim(DM)[2]){
+  
+  DM.new<-cbind(DM.new,DM[,i], DM[,i])
+}
+calcPower.SWD(ThetaEst=delta, Design=DM.new[,3:12], 
+              tauq=sigma.alpha^2, sigmaq=sigma^2, sigmaq.error =sigma.e^2,  
+              noSub=K, type="longitudinal")
+#Table 1, row 5
+calcPower.SWD(ThetaEst=delta, Design=DM.new, 
+              tauq=sigma.alpha^2, sigmaq=sigma^2, sigmaq.error =sigma.e^2,  
+              noSub=K, type="longitudinal")
+
