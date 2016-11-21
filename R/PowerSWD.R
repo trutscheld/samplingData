@@ -16,7 +16,7 @@
 #' noCl<-10
 #' noT<-6
 #' switches<-2
-#' DM<-designMatrix.SWD(noCl,noT,switches)
+#' DM<-designMatrix(noCl,noT,switches)
 #' sigma.e <- 2
 #' sigma.alpha <- 2   
 #' #Power for cross-sectional SWD design by formula of Hussey&Hughes 

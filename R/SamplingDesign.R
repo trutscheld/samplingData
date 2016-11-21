@@ -1,7 +1,7 @@
 
 #' #' Sampling Response of individuals within a SWD model
 #'
-#' @description Sample data (response) for given numbers of individuals by given a SWD model 
+#' @description Sample data (response) for given numbers of individuals by given a model (of a parallel, cross-sectional, stepped wedge design study) 
 #' @param type of the design is either cross-sectional or longitudinal 
 #' @param K number of timepoints or measurments (design parameter)
 #' @param J number of subjects
@@ -15,24 +15,24 @@
 #' K<-6  #measurement (or timepoints)
 #' I<-10 #Cluster
 #' J<-2 #number of subjects
-#' X<-designMatrix.SWD(nC=I, nT=K, nSw=2)
+#' X<-designMatrix(nC=I, nT=K, nSw=2)
 #' D<-completeDataDesignMatrix(J, X)
 #' sigma.1<-0.1
 #' sigma.3<-0.9
 #' type<-"cross-sec"
-#' V<-CovMat_Design(K, J, I, sigma.1=sigma.1, sigma.3=sigma.3, design="SWD", type=type)
+#' V<-CovMat_Design(K, J, I, sigma.1=sigma.1, sigma.3=sigma.3)
 #' mu.0<-0
 #' theta<-1
 #' betas<-rep(0, K-1)
 #' parameters<-c(mu.0, betas, theta)
-#' sample.data<-sampleData(type = type, K=K,J=J,I=I, D=D, V=V, parameters=parameters )
+#' sample.data<-sampleData(type = type, K=K,J=J,I=I, D=D, V=V, parameters=parameters)
 #' xtabs(~cluster+measurement, data=sample.data)
 #' @export
 sampleData<-function(type, K,J,I, D, A=NULL, V, parameters ){
   
   library("mvtnorm")
   if(is.null(A)){A<-D}
-  #sample I cluster from distribution of cluster, each ave the same mean vector
+  #sample I cluster from distribution of cluster, each have the same mean vector
   mean.vec<-A%*%parameters
   sample<-rmvnorm(1, mean=mean.vec, sigma=V) #row = number of subjects. # col = number of rep.Meas
   

@@ -1,0 +1,1093 @@
+\documentclass{article}
+
+\usepackage[a4paper, total={6in, 8in}]{geometry}
+
+\usepackage{amsmath}
+\usepackage{booktabs}
+
+\newcommand{\Rfunction}[1]{{\texttt{#1}}}
+\newcommand{\Robject}[1]{{\texttt{#1}}}
+\newcommand{\Rpackage}[1]{{\textit{#1}}}
+\newcommand{\R}[1]{{\textit{#1}}}
+
+
+
+\title{Vignette to package 'samplingData'}
+\author{Diana Trutschel}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{Introduction}
+
+\subsection{Objective}
+
+To evaluate for example the match of different statistical model often simulation studies are used. 
+In simulations the underlying data can be from a real study, but also simulated data given a distribution. 
+For this purpose we provide a package to sampling data from normal distribution to mimic data of cluster randomised trials within different study designs, namely parallel, cross-over and stepped wedge design.
+Besides a traditional design collects sampling units within different groups, which should be compared, in the past years multilevel design, which collect additional units nested within the original sampling units, becomes very popular. Measurements of different patients nested within hospitals, also assigned as clusters, is one example of a two-level nested data. Another example of nested structures are the repeated measurements of patients. Furthermore, three-level nested data is obtained for example by the  combination of both nesting examples. The complete data of such examples are then a multivariate distributed. The aim of this package is to provide a easy implementation of sampling multivariate normal distributed data for further investigations. Additionally, the requires power calculations for studies under these specific designs are given.
+
+\subsection{Different study types}
+
+\paragraph{Parallel, cross-over an stepped wedge designs.}
+
+With this package we provide data sampling within three common used study design types: parallel, cross-over an stepped wedge designs (SWD). \ref{Tab.Studytype} shows examples of these kind of types, each with  $C=6$ cluster, followed over $T=4$ time points.
+A parallel design is present, when two groups of treatments are given so that one group receives only the first while another group receives only second.
+In contrast to the parallel design in a crossover design trail each experimental unit (patient) receives different treatments during the different time points.
+Hence, it is a repeated measurements design. 
+An alternative and more popular becoming design is the stepped wedge design. Here, the intervntion is rollout to different units sequential but random over different time points.
+
+\begin{table}[!ht]
+%\begin{small}
+\begin{tabular}{l|cccc}  
+%\toprule
+%\cmidrule(r){1-2}
+\textbf{A} &$T_1$ & $T_2$&$T_3$ &$T_4$\\
+\midrule
+ Center$_1$&0&0&0&0\\
+ Center$_2$&0&0&0&0\\
+ Center$_3$&0&0&0&0\\
+ Center$_4$&1&1&1&1\\
+ Center$_5$&1&1&1&1\\
+ Center$_6$&1&1&1&1\\
+\bottomrule
+\end{tabular}
+\hfill
+\begin{tabular}{l|cccc}  
+%\toprule
+%\cmidrule(r){1-2}
+\textbf{B} &$T_1$ & $T_2$&$T_3$ &$T_4$\\
+\midrule
+&0&0&1&1\\
+&0&0&1&1\\
+&0&0&1&1\\
+&1&1&0&0\\
+&1&1&0&0\\
+&1&1&0&0\\
+\bottomrule
+\end{tabular}
+\hfill
+\begin{tabular}{l|ccccc}  
+%\toprule
+%\cmidrule(r){1-2}
+\textbf{C} &$T_1$ & $T_2$&$T_3$  &$T_4$  \\
+\midrule
+&0&1&1&1\\
+&0&1&1&1\\
+&0&0&1&1\\
+&0&0&1&1\\
+&0&0&0&1\\
+&0&0&0&1\\
+\bottomrule
+\end{tabular}
+%\end{small}
+\caption{Examples of different study design type of A) parallel, B) cross-over, and C) stepped wedge designs.}
+\label{Tab.Studytype}
+\end{table}
+
+\paragraph{Cross-sectional versus longitudinal.}
+
+In trials often subjects within clusters are followed over a period of time and measured to several measurment points. Two kinds of data collection is then possible: 1) cross-sectional data, if at each time point the measurment units (subjects) are different to the units at another timepoints, or 2) longitudinal data, the measurment units (subjects) are the same to all timepoints (known as repeated measurements). Hence, if it is a trail with $C$ clusters and a clustersize of $N$ each, which are follwed over $T$ timepoints, then the total number of included subjects is $C\times N$ in a cross-sectional and $C\times T\times N$ in a longitudinal study.
+
+\section{Multivariate normal distributed data for multilevel data}
+
+For the situation of a cluster-randomized trail with T the number of time points, 
+C the number of clusters and N the number of patients per cluster 
+the complete dataset can be written as the vector of responses $\overrightarrow{Y} = \left\{Y_{ijk}\right\}$ 
+of length $T \times C\times N$, which is sampled from a multidimensional normal distribution:
+
+\begin{eqnarray*}
+ \overrightarrow{Y}&\sim& N\left(Zb, V\right),
+\end{eqnarray*}
+
+where $Zb$ is then the fixed effects full rank design matrix multiplied by the regression fixed effects coefficients and $V$ the variance-covariance matrix. 
+$Y_{ijk}$ is then the observation in cluster $i$ to time point $k$ for the subject $j$ in the cross-sectional case or the $k$-th measurement of the subject $j$ in cluster $i$ in the longitudinal case, respectively. 
+The form of the random part (variance-covariance matrix) depends on the sampling of either cross-sectional or longitudinal study design, whereas the form of the fixed part depends on the study design type (parallel, cross-over an stepped wedge designs). 
+
+
+\subsection{Fixed effects part}
+
+The regression fixed effects coefficients within the provided designs are defined as
+\begin{eqnarray*}
+  b &=& \left(\mu, \beta_1, \cdots, \beta_I, \theta \right), 
+\end{eqnarray*}
+where
+$\mu$ is the overall mean, $\theta$ is the intervention effect, $\beta_k$ is the fixed time effect for time point $k, k=\left(1, \cdots, I\right)$.
+
+
+The design matrix $X$ of the model for such designs has the form
+\begin{eqnarray*}
+  X &=&  \bordermatrix{
+  					& \textrm{time point 1}	& \cdots	& \textrm{time point k}   & \cdots	   & \textrm{time point  T}  \cr
+\textrm{cluster 1} 	& x_{11}&\cdots	&\cdots &\cdots & x_{1T} \cr
+\vdots 				&\vdots &\ddots	&  		&  		& \vdots \cr
+\textrm{cluster i}	&\vdots &		&\ddots &  		& \vdots\cr
+\vdots 				&\vdots &		&  		&\ddots & \vdots\cr
+\textrm{cluster C} 	& x_{C1} &\cdots	&\cdots &\cdots & x_{CT} \cr
+}
+\end{eqnarray*}
+
+
+The fixed effects full rank design matrix $Z$ is then a concatenation of all matrices $Z_i$ of all clusters, 
+which in turn are a concatenation of $N$ replications of matrices $Z_{ij}$ (hence for all $j$ the $Z_{ij}$ is the same) 
+and which are created out of the design matrix $X$ of the SWD model.
+Then is $Z_{ij}$ for one subject in cluster i a column wise bind matrix of 
+\begin{enumerate}
+\item a vector of ones (the same for all cluster)
+\item a matrix $A$ (the same for all cluster)
+\item a vector, which is the corresponding row of the design matrix $X$ to cluster i.
+\end{enumerate}
+Each row of $Z_{ij}$ corresponds then to a identify entry of a fixed effects in regression fixed effects coefficients vector $b$. 
+
+
+\begin{eqnarray*}
+Z_{ij} &=&  \bordermatrix{
+    					& \mu	&\beta_{1}	& \beta_{2}	  & \cdots	& \beta_{I-1}  	&\theta\cr
+\textrm{time point 1} 	& 1		& 1			&0		 	& \cdots 	& 0				&x_{i1}\cr
+\vdots 					&\vdots &0 			&\ddots	&  			& \vdots 			& \vdots		&\cr
+\textrm{time point k}	&1 		&\vdots 	&\ddots	&\ddots 		& \vdots		&x_{ik}\cr
+\vdots 					&\vdots &\vdots 	&		&\ddots  		& 1		& \vdots \cr
+\textrm{time point I} 	& 1 	& 0 			&\cdots 	&\cdots			&0 				&x_{iT} \cr
+}
+\end{eqnarray*}
+
+Hence, $Z_i$ is build by row wise bind $N$ replicates of $Z_{ij}$
+ \begin{eqnarray*}
+Z_{i} &=&\bordermatrix{
+    				& \cr
+\textrm{subject 1} 	& Z_{ij}\cr
+\vdots 	& \vdots      \cr
+\textrm{subject N}	&Z_{ij} 		\cr
+}
+\end{eqnarray*}
+and 
+$Z$ by row wise bind $C$ matrices $Z_{i}$
+ \begin{eqnarray*}
+Z &=&\bordermatrix{
+  					& \cr
+\textrm{cluster 1} 	& Z_{i}\cr
+\vdots 	& \vdots      \cr
+\textrm{cluster C}	&Z_{i} 		\cr
+}
+\end{eqnarray*}
+
+Hence, each row corresponds to one subject $j$ of a cluster $i$ to timepoint $k$ and multiplied 
+with the vector of regression fixed effects coefficients $b$ result in the fixed effect part of the linear equation for this observation. Hence, it is the mean vector of the multivariate normal distribution and 
+it is performed by the matrix multiplication $Zb$.
+
+
+
+\paragraph{Parallel design}
+
+For example with $I=4$ cluster and $K=3$ measurments, hence only two cluster for either control or treatment arm, the design matrix $X$ is defined as
+\begin{eqnarray*}
+  X &=&  \bordermatrix{
+      			& \textrm{time point 1}	& \textrm{time point 2} & \textrm{time point 3} & \textrm{time point 4} \cr
+\textrm{cluster 1} 	& 0&0	&0&0\cr
+\textrm{cluster 2}	& 0&0	&0&0\cr
+\textrm{cluster 3}  & 1&1	&1&1\cr
+\textrm{cluster 4}  & 1&1  &1&1\cr
+}
+\end{eqnarray*}
+
+
+and the matrix $Z_{i}$ for cluster 1 and 2 is then 
+\begin{eqnarray*}
+Z_{1} &=&  \bordermatrix{
+  						& \mu	&\beta_{1}	& \beta_{2}	& \beta_{3}  &\theta\cr
+\textrm{time point 1} 	& 1		&1			&0		 	& 0& 0\cr
+\textrm{time point 2} 	&1 		&0 			&1			& 0& 0\cr
+\textrm{time point 3}	&1 		&0			&0			& 1& 0\cr
+\textrm{time point 4}  &1 		&0			&0		&0	& 0\cr
+}
+\end{eqnarray*}
+
+and for cluster 3 and 4 
+\begin{eqnarray*}
+Z_{1} &=&  \bordermatrix{
+    					& \mu	&\beta_{1}	& \beta_{2}	& \beta_{3}  &\theta\cr
+\textrm{time point 1} 	& 1		&1			&0		 	& 0& 1\cr
+\textrm{time point 2} 	&1 		&0 			&1			& 0& 1\cr
+\textrm{time point 3}	&1 		&0			&0			& 1& 1\cr
+\textrm{time point 4}  &1 		&0			&0		&0	& 1\cr
+}
+\end{eqnarray*}
+
+then, if $N=2$ subjects are within each cluster the fixed effects full rank design matrix $Z$ is 
+
+\begin{eqnarray*}
+Z&=&\bordermatrix{
+  					& \cr
+\textrm{cluster 1} 	& Z_{1}\cr
+\textrm{cluster 2}	&Z_{2} 		\cr
+\textrm{cluster 3}  &Z_{3} 		\cr
+\textrm{cluster 4}  &Z_{4}   	\cr
+}\\
+&=&\bordermatrix{
+  					& \cr
+\textrm{cluster 1 subject 1} 	& Z_{1j}\cr
+\textrm{cluster 1 subject 2}	&Z_{1j} 		\cr
+\textrm{cluster 2 subject 1} 	& Z_{2j}\cr
+\textrm{cluster 2 subject 2}	&Z_{2j} 		\cr
+\textrm{cluster 3 subject 1}   & Z_{3j}\cr
+\textrm{cluster 3 subject 2}	&Z_{3j} 		\cr
+\textrm{cluster 4 subject 1}   & Z_{4j}\cr
+\textrm{cluster 4 subject 2}  &Z_{4j} 		\cr
+}
+\end{eqnarray*}
+\begin{eqnarray*}
+&=&  \bordermatrix{
+    					& \mu	&\beta_{1}	& \beta_{2}	& \beta_{3}&\theta\cr
+\textrm{cluster 1 subject 1 time point 1} 	& 1		&1			&0		 	& 0 & 0\cr
+\textrm{cluster 1 subject 1 time point 2} 	&1 		&0 			&1			& 0 & 0\cr
+\textrm{cluster 1 subject 1 time point 3}	&1 		&0			&0			& 1& 0\cr
+\textrm{cluster 1 subject 1 time point 4}  &1 		&0			&0		&0	& 0\cr
+\textrm{cluster 1 subject 2 time point 1} 	& 1		&1			&0		&0 	& 0\cr
+\textrm{cluster 1 subject 2 time point 2} 	&1 		&0 			&1		&0	& 0\cr
+\textrm{cluster 1 subject 2 time point 3}	&1 		&0			&0			& 1& 0\cr
+\textrm{cluster 1 subject 2 time point 4}  &1 		&0			&0		&0	& 0\cr
+\textrm{cluster 2 subject 1 time point 1} 	& 1		&1			&0		 	& 0& 0\cr
+\textrm{cluster 2 subject 1 time point 2} 	&1 		&0 			&1			& 0& 0\cr
+\textrm{cluster 2 subject 1 time point 3}	&1 		&0			&0		& 1	& 0\cr
+\textrm{cluster 2 subject 1 time point 4}  &1 		&0			&0		& 0	& 0\cr
+\textrm{cluster 2 subject 2 time point 1} 	& 1		&1			&0		 	& 0& 0\cr
+\textrm{cluster 2 subject 2 time point 2} 	&1 		&0 			&1			& 0& 0\cr
+\textrm{cluster 2 subject 2 time point 3}	&1 		&0			&0			& 1& 0\cr
+\textrm{cluster 2 subject 2 time point 4}  &1 		&0			&0		& 0	& 0\cr
+\textrm{cluster 3 subject 1 time point 1}   & 1		&1			&0		 	& 0& 1\cr
+\textrm{cluster 3 subject 1 time point 2} 	&1 		&0 			&1			& 0& 1\cr
+\textrm{cluster 3 subject 1 time point 3}	&1 		&0			&0		& 1	& 1\cr
+\textrm{cluster 3 subject 1 time point 4}  &1 		&0			&0		& 0	& 1\cr
+\textrm{cluster 3 subject 2 time point 1} 	& 1		&1			&0		 	& 0& 1\cr
+\textrm{cluster 3 subject 2 time point 2} 	&1 		&0 			&1			& 0& 1\cr
+\textrm{cluster 3 subject 2 time point 3}	&1 		&0			&0			& 1& 1\cr
+\textrm{cluster 3 subject 2 time point 4}  &1 		&0			&0		& 0	& 1\cr
+\textrm{cluster 4 subject 1 time point 1}   & 1  	&1			&0		 	& 0& 1\cr
+\textrm{cluster 4 subject 1 time point 2} 	&1 		&0 			&1			& 0& 1\cr
+\textrm{cluster 4 subject 1 time point 3}	&1 		&0			&0		& 1	& 1\cr
+\textrm{cluster 4 subject 1 time point 4}  &1 		&0			&0		& 0	& 1\cr
+\textrm{cluster 4 subject 2 time point 1} 	& 1		&1			&0		 	& 0& 1\cr
+\textrm{cluster 4 subject 2 time point 2} 	&1 		&0 			&1			& 0& 1\cr
+\textrm{cluster 4 subject 2 time point 3}	&1 		&0			&0			& 1& 1\cr
+\textrm{cluster 4 subject 2 time point 4}  &1 		&0			&0		& 0	& 1\cr
+}
+\end{eqnarray*}
+
+
+and the fixed part, hence the mean vector of the multivariate normal distribution, is then
+
+\begin{eqnarray*}
+\overrightarrow{\mu}
+&=&  Z*
+\left(\begin{array}{ccc}
+ \mu	\\
+ \beta_{1}	\\
+ \beta_{2}	\\
+ \beta_{3}  \\
+ \theta
+ \end{array}\right) 
+=
+ \left(
+ \begin{array}{c}
+ \mu +\beta_{1}	 \\
+  \mu	+\beta_{2}	\\
+  \mu  +\beta_{3}	\\
+  \mu	 \\
+  \mu +\beta_{1}	 \\
+  \mu	+\beta_{2}	\\
+  \mu  +\beta_{3}	\\
+  \mu	 \\
+  \mu +\beta_{1}   \\
+  \mu	+\beta_{2}	\\
+  \mu  +\beta_{3}	\\
+  \mu	 \\
+  \mu +\beta_{1}	 \\
+  \mu	+\beta_{2}	\\
+  \mu  +\beta_{3}	\\
+  \mu	\\ 
+    \mu	+\beta_{1}	+\theta\\
+     \mu	+\beta_{2}	+\theta \\
+     \mu  +\beta_{3}	+\theta\\
+      \mu	 +\theta\\
+      \mu	+\beta_{1}	+\theta\\
+     \mu	+\beta_{2}	+\theta  \\
+     \mu  +\beta_{3}	+\theta\\
+      \mu	+\theta \\ 
+      \mu  +\beta_{1}	+\theta\\
+     \mu	+\beta_{2}	+\theta \\
+     \mu  +\beta_{3}	+\theta\\
+      \mu	 +\theta\\
+      \mu	+\beta_{1}	+\theta\\
+     \mu	+\beta_{2}	+\theta  \\
+     \mu  +\beta_{3}	+\theta\\
+      \mu	 +\theta\\ 
+ \end{array}\right) 
+\end{eqnarray*}
+
+
+\paragraph{Cross-over design}
+
+For example with $I=4$ cluster and $K=4$ measurments, two cluster each switches treatment and control after time point 2, the design matrix $X$ is defined as
+
+\begin{eqnarray*}
+  X &=&  \bordermatrix{
+  					& \textrm{time point 1}	& \textrm{time point 2} & \textrm{time point 3} & \textrm{time point 4} \cr
+\textrm{cluster 1} 	& 0&0	&1&1\cr
+\textrm{cluster 2}	& 0&0	&1&1\cr
+\textrm{cluster 3}  & 1&1	&0&0\cr
+\textrm{cluster 4}  & 1&1  &0&0\cr
+}
+\end{eqnarray*}
+
+
+and the matrix $Z_{i}$ for cluster 1 and 2 is then 
+\begin{eqnarray*}
+Z_{1} &=&  \bordermatrix{
+  						& \mu	&\beta_{1}	& \beta_{2}	& \beta_{3}  &\theta\cr
+\textrm{time point 1} 	& 1		&1			&0		 	& 0& 0\cr
+\textrm{time point 2} 	&1 		&0 			&1			& 0& 0\cr
+\textrm{time point 3}	&1 		&0			&0			& 1& 1\cr
+\textrm{time point 4}  &1 		&0			&0		&0	& 1\cr
+}
+\end{eqnarray*}
+
+and for cluster 3 and 4  
+\begin{eqnarray*}
+Z_{1} &=&  \bordermatrix{
+    					& \mu	&\beta_{1}	& \beta_{2}	& \beta_{3}  &\theta\cr
+\textrm{time point 1} 	& 1		&1			&0		 	& 0& 1\cr
+\textrm{time point 2} 	&1 		&0 			&1			& 0& 1\cr
+\textrm{time point 3}	&1 		&0			&0			& 1& 0\cr
+\textrm{time point 4}  &1 		&0			&0		&0	& 0\cr
+}
+\end{eqnarray*}
+
+then, if $N=2$ subjects are within each cluster the fixed effects full rank design matrix $Z$ is 
+
+\begin{eqnarray*}
+Z&=&\bordermatrix{
+  					& \cr
+\textrm{cluster 1} 	& Z_{1}\cr
+\textrm{cluster 2}	&Z_{2} 		\cr
+\textrm{cluster 3}  &Z_{3} 		\cr
+\textrm{cluster 4}  &Z_{4}   	\cr
+}\\
+&=&\bordermatrix{
+  					& \cr
+\textrm{cluster 1 subject 1} 	& Z_{1j}\cr
+\textrm{cluster 1 subject 2}	&Z_{1j} 		\cr
+\textrm{cluster 2 subject 1} 	& Z_{2j}\cr
+\textrm{cluster 2 subject 2}	&Z_{2j} 		\cr
+\textrm{cluster 3 subject 1}   & Z_{3j}\cr
+\textrm{cluster 3 subject 2}	&Z_{3j} 		\cr
+\textrm{cluster 4 subject 1}   & Z_{3j}\cr
+\textrm{cluster 4 subject 2}  &Z_{3j} 		\cr
+}
+\end{eqnarray*}
+\begin{eqnarray*}
+&=&  \bordermatrix{
+  						& \mu	&\beta_{1}	& \beta_{2}	& \beta_{3}&\theta\cr
+\textrm{cluster 1 subject 1 time point 1} 	& 1		&1			&0		 	& 0 & 0\cr
+\textrm{cluster 1 subject 1 time point 2} 	&1 		&0 			&1			& 0 & 0\cr
+\textrm{cluster 1 subject 1 time point 3}	&1 		&0			&0			& 1& 1\cr
+\textrm{cluster 1 subject 1 time point 4}  &1 		&0			&0		&0	& 1\cr
+\textrm{cluster 1 subject 2 time point 1} 	& 1		&1			&0		&0 	& 0\cr
+\textrm{cluster 1 subject 2 time point 2} 	&1 		&0 			&1		&0	& 0\cr
+\textrm{cluster 1 subject 2 time point 3}	&1 		&0			&0			& 1& 1\cr
+\textrm{cluster 1 subject 2 time point 4}  &1 		&0			&0		&0	& 1\cr
+\textrm{cluster 2 subject 1 time point 1} 	& 1		&1			&0		 	& 0& 0\cr
+\textrm{cluster 2 subject 1 time point 2} 	&1 		&0 			&1			& 0& 0\cr
+\textrm{cluster 2 subject 1 time point 3}	&1 		&0			&0		& 1	& 1\cr
+\textrm{cluster 2 subject 1 time point 4}  &1 		&0			&0		& 0	& 1\cr
+\textrm{cluster 2 subject 2 time point 1} 	& 1		&1			&0		 	& 0& 0\cr
+\textrm{cluster 2 subject 2 time point 2} 	&1 		&0 			&1			& 0& 0\cr
+\textrm{cluster 2 subject 2 time point 3}	&1 		&0			&0			& 1& 1\cr
+\textrm{cluster 2 subject 2 time point 4}  &1 		&0			&0		& 0	& 1\cr
+\textrm{cluster 3 subject 1 time point 1}   & 1		&1			&0		 	& 0& 1\cr
+\textrm{cluster 3 subject 1 time point 2} 	&1 		&0 			&1			& 0& 1\cr
+\textrm{cluster 3 subject 1 time point 3}	&1 		&0			&0		& 1	& 0\cr
+\textrm{cluster 3 subject 1 time point 4}  &1 		&0			&0		& 0	& 0\cr
+\textrm{cluster 3 subject 2 time point 1} 	& 1		&1			&0		 	& 0& 1\cr
+\textrm{cluster 3 subject 2 time point 2} 	&1 		&0 			&1			& 0& 1\cr
+\textrm{cluster 3 subject 2 time point 3}	&1 		&0			&0			& 1& 0\cr
+\textrm{cluster 3 subject 2 time point 4}  &1 		&0			&0		& 0	& 0\cr
+\textrm{cluster 4 subject 1 time point 1}   & 1  	&1			&0		 	& 0& 1\cr
+\textrm{cluster 4 subject 1 time point 2} 	&1 		&0 			&1			& 0& 1\cr
+\textrm{cluster 4 subject 1 time point 3}	&1 		&0			&0		& 1	& 0\cr
+\textrm{cluster 4 subject 1 time point 4}  &1 		&0			&0		& 0	& 0\cr
+\textrm{cluster 4 subject 2 time point 1} 	& 1		&1			&0		 	& 0& 1\cr
+\textrm{cluster 4 subject 2 time point 2} 	&1 		&0 			&1			& 0& 1\cr
+\textrm{cluster 4 subject 2 time point 3}	&1 		&0			&0			& 1& 0\cr
+\textrm{cluster 4 subject 2 time point 4}  &1 		&0			&0		& 0	& 0\cr
+}
+\end{eqnarray*}
+
+
+and the fixed part, hence the mean vector of the multivariate normal distribution, is then
+
+\begin{eqnarray*}
+\overrightarrow{\mu}
+&=&  Z*
+\left(\begin{array}{ccc}
+ \mu	\\
+ \beta_{1}	\\
+ \beta_{2}	\\
+ \beta_{3}  \\
+ \theta
+ \end{array}\right) 
+=
+ \left(
+ \begin{array}{c}
+ \mu +\beta_{1}	 \\
+  \mu	+\beta_{2}	\\
+  \mu  +\beta_{3}	+\theta\\
+  \mu	 +\theta\\
+  \mu +\beta_{1}	 \\
+  \mu	+\beta_{2}	\\
+  \mu  +\beta_{3}	+\theta\\
+  \mu	 +\theta\\
+  \mu +\beta_{1}   \\
+  \mu	+\beta_{2}	\\
+  \mu  +\beta_{3}	+\theta\\
+  \mu	 +\theta\\
+  \mu +\beta_{1}	 \\
+  \mu	+\beta_{2}	\\
+  \mu  +\beta_{3}	+\theta\\
+  \mu	 +\theta\\ 
+    \mu	+\beta_{1}	+\theta\\
+     \mu	+\beta_{2}	+\theta \\
+     \mu  +\beta_{3}	\\
+      \mu	 \\
+      \mu	+\beta_{1}	+\theta\\
+     \mu	+\beta_{2}	+\theta  \\
+     \mu  +\beta_{3}	\\
+      \mu	 \\ 
+      \mu  +\beta_{1}	+\theta\\
+     \mu	+\beta_{2}	+\theta \\
+     \mu  +\beta_{3}	\\
+      \mu	 \\
+      \mu	+\beta_{1}	+\theta\\
+     \mu	+\beta_{2}	+\theta  \\
+     \mu  +\beta_{3}	\\
+      \mu	 \\ 
+ \end{array}\right) 
+\end{eqnarray*}
+
+
+
+\paragraph{Stepped wedge design}
+
+
+For example with $I=3$ cluster and $K=4$ measurments, hence only one cluster switches per timepoint, 
+the design matrix $X$ is defined as
+\begin{eqnarray*}
+	X &=&  \bordermatrix{
+  					& \textrm{time point 1}	& \textrm{time point 2} & \textrm{time point 3} & \textrm{time point 4} \cr
+\textrm{cluster 1} 	& 0&1	&1&1\cr
+\textrm{cluster 2}	& 0&0	&1&1\cr
+\textrm{cluster 3}  & 0&0	&0&1\cr
+}
+\end{eqnarray*}
+
+
+and the matrix $Z_{i}$ for cluster 1 is then 
+\begin{eqnarray*}
+Z_{1} &=&  \bordermatrix{
+  						& \mu	&\beta_{1}	& \beta_{2}	& \beta_{3}  &\theta\cr
+\textrm{time point 1} 	& 1		&1			&0		 	& 0& 0\cr
+\textrm{time point 2} 	&1 		&0 			&1			& 0& 1\cr
+\textrm{time point 3}	&1 		&0			&0			& 1& 1\cr
+\textrm{time point 4}  &1 		&0			&0		&0	& 1\cr
+}
+\end{eqnarray*}
+
+then, if $N=2$ subjects are within each cluster the fixed effects full rank design matrix $Z$ is 
+
+\begin{eqnarray*}
+Z&=&\bordermatrix{
+  					& \cr
+\textrm{cluster 1} 	& Z_{1}\cr
+\textrm{cluster 2}	&Z_{2} 		\cr
+\textrm{cluster 3}  &Z_{3} 		\cr
+}\\
+&=&\bordermatrix{
+  					& \cr
+\textrm{cluster 1 subject 1} 	& Z_{1j}\cr
+\textrm{cluster 1 subject 2}	&Z_{1j} 		\cr
+\textrm{cluster 2 subject 1} 	& Z_{2j}\cr
+\textrm{cluster 2 subject 2}	&Z_{2j} 		\cr
+\textrm{cluster 3 subject 1}   & Z_{3j}\cr
+\textrm{cluster 3 subject 2}	&Z_{3j} 		\cr
+}
+\end{eqnarray*}
+\begin{eqnarray*}
+&=&  \bordermatrix{
+  						& \mu	&\beta_{1}	& \beta_{2}	& \beta_{3}&\theta\cr
+\textrm{cluster 1 subject 1 time point 1} 	& 1		&1			&0		 	& 0 & 0\cr
+\textrm{cluster 1 subject 1 time point 2} 	&1 		&0 			&1			& 0 & 1\cr
+\textrm{cluster 1 subject 1 time point 3}	&1 		&0			&0			& 1& 1\cr
+\textrm{cluster 1 subject 1 time point 4}  &1 		&0			&0		&0	& 1\cr
+\textrm{cluster 1 subject 2 time point 1} 	& 1		&1			&0		&0 	& 0\cr
+\textrm{cluster 1 subject 2 time point 2} 	&1 		&0 			&1		&0	& 1\cr
+\textrm{cluster 1 subject 2 time point 3}	&1 		&0			&0			& 1& 1\cr
+\textrm{cluster 1 subject 2 time point 4}  &1 		&0			&0		&0	& 1\cr
+\textrm{cluster 2 subject 1 time point 1} 	& 1		&1			&0		 	& 0& 0\cr
+\textrm{cluster 2 subject 1 time point 2} 	&1 		&0 			&1			& 0& 0\cr
+\textrm{cluster 2 subject 1 time point 3}	&1 		&0			&0		& 1	& 1\cr
+\textrm{cluster 2 subject 1 time point 4}  &1 		&0			&0		& 0	& 1\cr
+\textrm{cluster 2 subject 2 time point 1} 	& 1		&1			&0		 	& 0& 0\cr
+\textrm{cluster 2 subject 2 time point 2} 	&1 		&0 			&1			& 0& 0\cr
+\textrm{cluster 2 subject 2 time point 3}	&1 		&0			&0			& 1& 1\cr
+\textrm{cluster 2 subject 2 time point 4}  &1 		&0			&0		& 0	& 1\cr
+\textrm{cluster 3 subject 1 time point 1}   & 1		&1			&0		 	& 0& 0\cr
+\textrm{cluster 3 subject 1 time point 2} 	&1 		&0 			&1			& 0& 0\cr
+\textrm{cluster 3 subject 1 time point 3}	&1 		&0			&0		& 1	& 0\cr
+\textrm{cluster 3 subject 1 time point 4}  &1 		&0			&0		& 0	& 1\cr
+\textrm{cluster 3 subject 2 time point 1} 	& 1		&1			&0		 	& 0& 0\cr
+\textrm{cluster 3 subject 2 time point 2} 	&1 		&0 			&1			& 0& 0\cr
+\textrm{cluster 3 subject 2 time point 3}	&1 		&0			&0			& 1& 0\cr
+\textrm{cluster 3 subject 2 time point 4}  &1 		&0			&0		& 0	& 1\cr
+}
+\end{eqnarray*}
+
+
+and the fixed part, hence the mean vector of the multivariate normal distribution, is then
+
+\begin{eqnarray*}
+\overrightarrow{\mu}
+&=&  Z*
+\left(\begin{array}{ccc}
+ \mu	\\
+ \beta_{1}	\\
+ \beta_{2}	\\
+ \beta_{3}  \\
+ \theta
+ \end{array}\right) 
+=
+ \left(
+ \begin{array}{c}
+ \mu +\beta_{1}	 \\
+  \mu	+\beta_{2}	+\theta\\
+  \mu  +\beta_{3}	+\theta\\
+  \mu	 +\theta\\
+  \mu +\beta_{1}	 \\
+  \mu	+\beta_{2}	+\theta\\
+  \mu  +\beta_{3}	+\theta\\
+  \mu	 +\theta\\
+    \mu	+\beta_{1}	\\
+     \mu	+\beta_{2}	 \\
+     \mu  +\beta_{3}	+\theta\\
+      \mu	 +\theta\\
+      \mu	+\beta_{1}	\\
+     \mu	+\beta_{2}	 \\
+     \mu  +\beta_{3}	+\theta\\
+      \mu	 +\theta \\   
+      \mu  +\beta_{1}	\\
+     \mu	+\beta_{2}	 \\
+     \mu  +\beta_{3}	\\
+      \mu	 +\theta\\
+      \mu	+\beta_{1}	\\
+     \mu	+\beta_{2}	 \\
+     \mu  +\beta_{3}	\\
+      \mu	 +\theta \\   
+ \end{array}\right) 
+\end{eqnarray*}
+
+
+\subsection{Random part}
+
+
+All clusters are independent from each other, 
+hence the variance-covariance matrix $V$ is a block-diagonal matrix of the matrices $V_{i}$ of all clusters (and all others are zeros), 
+where for all $i$ the $V_{i}$ are the same for all cluster. 
+
+\begin{eqnarray*}
+V &=&  \bordermatrix{
+        			&\textrm{cluster 1}	&	& 	&\textrm{cluster C}\cr
+\textrm{cluster 1} 	& V_{i}	&0			&\cdots		& 0\cr
+ 					&0 		& \ddots	&\ddots		& \vdots \cr
+ 					&\vdots &\ddots		&\ddots		&0  \cr
+\textrm{cluster C}	&0 		&\cdots		&	0		& V_{i}\cr
+}
+\end{eqnarray*}
+
+and 
+
+\begin{eqnarray*}
+V_{i} &=&  \bordermatrix{
+  					&\textrm{subject 1}	&	& 	&\textrm{subject N}\cr
+\textrm{subject 1} 	& V_{i1, i1}		&V_{i1 , i2}			&\cdots		& V_{i1 , iN}\cr
+ 					&V_{i1 , i2}		& \ddots	&\ddots		& \vdots \cr
+ 					&\vdots &\ddots		&\ddots		&V_{iN-1 , iN}  \cr
+\textrm{subject N}	&V_{i1 , iN} 		&\cdots		&	V_{iN-1 , iN}		& V_{iN, N}\cr
+}
+\end{eqnarray*}
+
+Therefor we define $V_{ij , i\tilde{j}}$ as a submatrix of $V_{i}$ for the entities corresponding 
+to the measurements of subject $i$ and the measurement of subject $\tilde{j}$.
+
+
+
+For all two different subjects $j$ and $\tilde{j}$ ($j\neq \tilde{j}$) this submatrix is defined by
+\begin{eqnarray*}
+V_{ij , i\tilde{j}} &=&  \bordermatrix{
+						&\textrm{timpoint 1}	& 			&\textrm{timepoint T}\cr
+\textrm{timpoint 1} 	& \sigma_{e}^2			&\cdots		& \sigma_{e}^2\cr
+ 						&\vdots 				&			&\vdots		  \cr
+\textrm{timepoint T}	&\sigma_{e}^2 			&\cdots		& \sigma_{e}^2\cr
+}
+\end{eqnarray*}
+
+The difference in the distributions of the observations within a cross-sectional and longitudinal SWD is 
+in the random part of the model.  
+Thus the variance-covariance matrix $V$ of the normal distribution $N\left(Zb, V\right)$ and hence the form of the $V_i$ or $V_{ij , ij}$ respectively differ. 
+
+\paragraph{Variance-Covariance matrix within a cross-sectional design.}
+
+\begin{eqnarray*}
+V_{ij , ij} &=&  \bordermatrix{
+  						&\textrm{timpoint 1}	&	& 	&\textrm{timepoint T}\cr
+\textrm{timpoint 1} 	&\sigma_{\alpha}^2 + \sigma_{e}^2	&\sigma_{e}^2			&\cdots		&  \sigma_{e}^2\cr
+ 						&\sigma_{e}^2 		& \ddots	&\ddots		& \vdots \cr
+ 						&\vdots &\ddots		&\ddots		&\sigma_{e}^2  \cr
+\textrm{timepoint T}	&\sigma_{e}^2 		&\cdots		&	\sigma_{e}^2		& \sigma_{\alpha}^2 +  \sigma_{e}^2\cr
+}
+\end{eqnarray*}
+
+For our example of ($I=2$ cluster,) $K=3$ timepoints and $N=2$ subjects each cluster the Variance-Covariance matrix $V_i$ for each cluster is then
+
+%\begin{eqnarray*}
+%V_{i} &=&  \bordermatrix{
+%  						&\textrm{tp 1}	&\textrm{tp 2}	&\textrm{tp 3}&\textrm{tp 1}	&\textrm{tp 2}	&\textrm{tp 3}\cr
+%\textrm{tp 1} 	&\sigma_{\alpha}^2 + \sigma_{e}^2	&\sigma_{e}^2							&  \sigma_{e}^2
+%				&\sigma_{e}^2	&\sigma_{e}^2							&  \sigma_{e}^2\cr
+% \textrm{tp 2} 	&\sigma_{e}^2 						&  \sigma_{\alpha}^2 +  \sigma_{e}^2 	& \sigma_{e}^2 
+% 				&\sigma_{e}^2	&\sigma_{e}^2							&  \sigma_{e}^2\cr
+%\textrm{tp T}	&\sigma_{e}^2 						&	\sigma_{e}^2						& \sigma_{\alpha}^2 +  \sigma_{e}^2
+%				&\sigma_{e}^2	&\sigma_{e}^2							&  \sigma_{e}^2\cr
+%\textrm{tp 1} 	&\sigma_{e}^2	&\sigma_{e}^2							&  \sigma_{e}^2&\sigma_{\alpha}^2 + \sigma_{e}^2	&\sigma_{e}^2							&  \sigma_{e}^2\cr
+% \textrm{tp 2} 	&\sigma_{e}^2	&\sigma_{e}^2							&  \sigma_{e}^2&\sigma_{e}^2 						&  \sigma_{\alpha}^2 +  \sigma_{e}^2 	& \sigma_{e}^2 \cr
+%\textrm{tp T}	&\sigma_{e}^2	&\sigma_{e}^2							&  \sigma_{e}^2&\sigma_{e}^2 						&	\sigma_{e}^2						& \sigma_{\alpha}^2 +  \sigma_{e}^2\cr
+%}
+%\end{eqnarray*}
+
+
+
+\begin{small}
+\begin{eqnarray*}
+  \begin{array}{cccccc}
+  \multicolumn{3}{c}{\overbrace{\rule{4cm}{0pt}}^{\textrm{subject 1}}} & \multicolumn{3}{c}{\overbrace{\rule{4cm}{0pt}}^{\textrm{subject 2}}}\\[-2pt]
+  \textrm{tp 1}	\qquad &\textrm{tp 2}	&\textrm{tp 3}&\textrm{tp 1}\qquad	&\textrm{tp 2}	&\textrm{tp 3}\cr
+  \end{array}\cr
+  \begin{array}{c}  
+  	\cr
+	\cr
+ 	\textrm{subject 1} \cr
+	\cr
+	\cr
+ 	\textrm{subject 2} \cr
+	\cr
+ \end{array}
+ \begin{array}{c}  
+  	\cr
+	\left\{
+	\begin{array}{c}  
+		\textrm{tp 1} 	\cr
+ 		\textrm{tp 2} \cr
+		\textrm{tp T}	\cr
+ 	\end{array}\right.	\cr
+	\left\{
+	\begin{array}{c}  
+		\textrm{tp 1} 	\cr
+ 		\textrm{tp 2} \cr
+		\textrm{tp T}	\cr
+ 	\end{array}\right.	\cr
+ \end{array}
+ \left(
+  \begin{array}{cccccc}
+ \sigma_{\alpha}^2 + \sigma_{e}^2	&\sigma_{e}^2							&  \sigma_{e}^2
+				&\sigma_{e}^2	&\sigma_{e}^2							&  \sigma_{e}^2\cr
+\sigma_{e}^2 						&  \sigma_{\alpha}^2 +  \sigma_{e}^2 	& \sigma_{e}^2 
+ 				&\sigma_{e}^2	&\sigma_{e}^2							&  \sigma_{e}^2\cr
+\sigma_{e}^2 						&	\sigma_{e}^2						& \sigma_{\alpha}^2 +  \sigma_{e}^2
+				&\sigma_{e}^2	&\sigma_{e}^2							&  \sigma_{e}^2\cr
+\sigma_{e}^2	&\sigma_{e}^2							&  \sigma_{e}^2&\sigma_{\alpha}^2 + \sigma_{e}^2	&\sigma_{e}^2							&  \sigma_{e}^2\cr
+ \sigma_{e}^2	&\sigma_{e}^2							&  \sigma_{e}^2&\sigma_{e}^2 						&  \sigma_{\alpha}^2 +  \sigma_{e}^2 	& \sigma_{e}^2 \cr
+\sigma_{e}^2	&\sigma_{e}^2							&  \sigma_{e}^2&\sigma_{e}^2 						&	\sigma_{e}^2						& \sigma_{\alpha}^2 +  \sigma_{e}^2\cr
+	\end{array}
+	\right)\cr
+\end{eqnarray*}
+\end{small}
+
+\paragraph{Variance-Covariance matrix within a  longitudinal design.}
+
+\begin{eqnarray*}
+V_{ij , ij} &=&  \bordermatrix{
+  						&\textrm{timpoint 1}	&	& 	&\textrm{timepoint T}\cr
+\textrm{timpoint 1} 	&\sigma_{\alpha}^2 + \sigma_{\gamma}^2 + \sigma_{e}^2	&\sigma_{\gamma}^2 + \sigma_{e}^2			&\cdots		& \sigma_{\gamma}^2 + \sigma_{e}^2\cr
+ 						&\sigma_{\gamma}^2 + \sigma_{e}^2 		& \ddots	&\ddots		& \vdots \cr
+ 						&\vdots &\ddots		&\ddots		&\sigma_{\gamma}^2 + \sigma_{e}^2  \cr
+\textrm{timepoint T}	&\sigma_{\gamma}^2 + \sigma_{e}^2 		&\cdots		&	\sigma_{\gamma}^2 + \sigma_{e}^2		& \sigma_{\alpha}^2 + \sigma_{\gamma}^2 + \sigma_{e}^2\cr
+}
+\end{eqnarray*}
+
+For our example of ($I=2$ cluster,) $K=3$ timepoints and $N=2$ subjects each cluster the Variance-Covariance matrix $V_i$ for each cluster is then
+
+\begin{tiny}
+%\begin{eqnarray*}
+%V_{i} &=&  \bordermatrix{
+%  						&\textrm{tp 1}	&\textrm{tp 2}	&\textrm{tp 3}&\textrm{tp 1}	&\textrm{tp 2}	&\textrm{tp 3}\cr
+%\textrm{tp 1} 	&\sigma_{\alpha}^2 + \sigma_{\gamma}^2+ \sigma_{e}^2	&\sigma_{\gamma}^2 +\sigma_{e}^2 &  \sigma_{\gamma}^2 +\sigma_{e}^2
+%				&\sigma_{e}^2	&\sigma_{e}^2							&  \sigma_{e}^2\cr
+% \textrm{tp 2} 	&\sigma_{\gamma}^2 +\sigma_{e}^2 						&  \sigma_{\alpha}^2 + \sigma_{\gamma}^2 + \sigma_{e}^2 	& \sigma_{\gamma}^2 +\sigma_{e}^2 
+% 				&\sigma_{e}^2	&\sigma_{e}^2							&  \sigma_{e}^2\cr
+%\textrm{tp T}	&\sigma_{\gamma}^2 +\sigma_{e}^2 						&	\sigma_{\gamma}^2 +\sigma_{e}^2						&\sigma_{\gamma}^2 + \sigma_{\alpha}^2 +  \sigma_{e}^2
+%				&\sigma_{e}^2	&\sigma_{e}^2							&  \sigma_{e}^2\cr
+%\textrm{tp 1} 	&\sigma_{e}^2	&\sigma_{e}^2							&  \sigma_{e}^2
+%				&\sigma_{\alpha}^2 + \sigma_{\gamma}^2 +\sigma_{e}^2	&\sigma_{\gamma}^2 +\sigma_{e}^2							&  \sigma_{\gamma}^2 +\sigma_{e}^2\cr
+% \textrm{tp 2} 	&\sigma_{e}^2	&\sigma_{e}^2							&  \sigma_{e}^2
+% 				&\sigma_{\gamma}^2 +\sigma_{e}^2 						&  \sigma_{\alpha}^2 +  \sigma_{\gamma}^2 +\sigma_{e}^2 	& \sigma_{\gamma}^2 +\sigma_{e}^2 \cr
+%\textrm{tp T}	&\sigma_{e}^2	&\sigma_{e}^2							&  \sigma_{e}^2
+%				&\sigma_{\gamma}^2 +\sigma_{e}^2 						&	\sigma_{\gamma}^2 +\sigma_{e}^2						& \sigma_{\alpha}^2 +  \sigma_{\gamma}^2 +\sigma_{e}^2\cr
+%}\\
+\begin{eqnarray*}
+ \begin{array}{cccccc}
+  \multicolumn{3}{c}{\overbrace{\rule{5.2cm}{0pt}}^{\textrm{subject 1}}} & \multicolumn{3}{c}{\overbrace{\rule{5.2cm}{0pt}}^{\textrm{subject 2}}}\\[-2pt]
+  \textrm{time point 1}	&\textrm{time point 2}	&\textrm{time point 3}&\textrm{time point 1}	&\textrm{time point 2}	&\textrm{time point 3}\cr
+  \end{array}\cr
+  \begin{array}{c}  
+  	\cr
+	\cr
+ 	\textrm{subject 1} \cr
+	\cr
+	\cr
+ 	\textrm{subject 2} \cr
+	\cr
+ \end{array}
+ \begin{array}{c}  
+  	\cr
+	\left\{
+	\begin{array}{c}  
+		\textrm{tp 1} 	\cr
+ 		\textrm{tp 2} \cr
+		\textrm{tp 3}	\cr
+ 	\end{array}\right.	\cr
+	\left\{
+	\begin{array}{c}  
+		\textrm{tp 1} 	\cr
+ 		\textrm{tp 2} \cr
+		\textrm{tp 3}	\cr
+ 	\end{array}\right.	\cr
+ \end{array}
+ \left(
+  \begin{array}{cccccc}
+\sigma_{\alpha}^2 + \sigma_{\gamma}^2+ \sigma_{e}^2	&\sigma_{\gamma}^2 +\sigma_{e}^2 &  \sigma_{\gamma}^2 +\sigma_{e}^2
+				&\sigma_{e}^2	&\sigma_{e}^2							&  \sigma_{e}^2\cr
+\sigma_{\gamma}^2 +\sigma_{e}^2 						&  \sigma_{\alpha}^2 + \sigma_{\gamma}^2 + \sigma_{e}^2 	& \sigma_{\gamma}^2 +\sigma_{e}^2 
+ 				&\sigma_{e}^2	&\sigma_{e}^2							&  \sigma_{e}^2\cr
+\sigma_{\gamma}^2 +\sigma_{e}^2 						&	\sigma_{\gamma}^2 +\sigma_{e}^2						&\sigma_{\gamma}^2 + \sigma_{\alpha}^2 +  \sigma_{e}^2
+				&\sigma_{e}^2	&\sigma_{e}^2							&  \sigma_{e}^2\cr
+\sigma_{e}^2	&\sigma_{e}^2							&  \sigma_{e}^2
+				&\sigma_{\alpha}^2 + \sigma_{\gamma}^2 +\sigma_{e}^2	&\sigma_{\gamma}^2 +\sigma_{e}^2							&  \sigma_{\gamma}^2 +\sigma_{e}^2\cr
+\sigma_{e}^2	&\sigma_{e}^2							&  \sigma_{e}^2
+ 				&\sigma_{\gamma}^2 +\sigma_{e}^2 						&  \sigma_{\alpha}^2 +  \sigma_{\gamma}^2 +\sigma_{e}^2 	& \sigma_{\gamma}^2 +\sigma_{e}^2 \cr
+\sigma_{e}^2	&\sigma_{e}^2							&  \sigma_{e}^2
+				&\sigma_{\gamma}^2 +\sigma_{e}^2 						&	\sigma_{\gamma}^2 +\sigma_{e}^2						& \sigma_{\alpha}^2 +  \sigma_{\gamma}^2 +\sigma_{e}^2\cr 
+	\end{array}
+	\right)\cr
+\end{eqnarray*}
+\end{tiny}
+
+
+\section{Manual}
+
+Use the following Package under GPL and load to the library:
+
+<<loadPAckage,echo=TRUE>>=
+#load the package
+library(samplingData)
+@
+
+
+\subsection{Design matrices}
+
+In each study a design matrix of values of explanatory variables can be used to describe the study type. 
+Here, each row represents an study unit (cluster) and the cell entities are the encoding of recieving the treatment or not (zeros and ones). 
+Table\ref{Tab.Studytype} shows such design matrices or different study types. 
+
+In contrast each row of the design matrix of the complete data of the trail represents a measurement with the successive columns corresponding to the variables (effects) and their specific values for that. The design matrix of the complete data corresponds to the fixed part of the multivariate normal distribution. 
+
+All matrices could also be implemented manually using the function \Rfunction{matrix()}, but, instead of ordering an amount of zeros and ones, the provided functions in this package make it easy to recieve this complex matrices for simple study designs using only some parameters (balanced, equal number of clusters per switch).
+
+\paragraph{designMatrix}
+
+The design matrix for the study type of the three types a) parallel, b) cross-over, and c) SWD can be performed by using the function \Rfunction{designMatrix()}, which require four parameters: the number of clusters within the trail, the number of measurement time points, the number of cluster, which switch over from control to intervention at each time point and the study type ("SWD" as default).
+
+<<designMarix.SWD, echo=TRUE>>=
+
+I<-6 #number of cluster
+K<-4  #number of  timecpoints
+
+#Design matrix for parallel study, see Table 1
+sw<-3 #number of cluster switches
+designMatrix(nC=I, nT=K, nSw=sw, design="parallel")
+
+#Design matrix for cross-over study, see Table 1
+designMatrix(nC=I, nT=K, nSw=sw, design="cross-over")
+#if swP is set, then the timepoint of switch is setted manually 
+designMatrix(nC=I, nT=K, nSw=sw, swP=1, design="cross-over")
+
+#Design matrix for SWD study, see Table 1
+sw<-2 #number of cluster switches
+designMatrix(nC=I, nT=K, nSw=sw)
+
+@
+
+%\paragraph{implemMatrix.SWD}
+\paragraph{completeDataDesignMatrix}
+
+The function \Rfunction{completeDataDesignMatrix()} performes the design matrix for complete data within given study design. It requires a design matrix of a study and the number of subject within each 'cell'.
+
+<<completeDataDesignMatrix>>=
+
+K<-4  #number of  time points
+J<-2 #number of subjects, each cluster and timepoint
+
+##### for parallel study #####
+
+I<-4 #number of cluster
+sw<-2 #number of cluster switches
+# create a design matrix
+(X<-designMatrix(nC=I, nT=K, nSw=sw, design="parallel"))
+# create the corresponding complete data design matrix
+completeDataDesignMatrix(J, X)
+
+##### for cross-over study #####
+
+# create a design matrix 
+(X<-designMatrix(nC=I, nT=K, nSw=sw, design="cross-over"))
+# create the corresponding complete data design matrix
+completeDataDesignMatrix(J, X)
+
+##### for SWD study #####
+
+I<-3 #number of cluster
+# create a design matrix
+(X<-designMatrix(nC=I, nT=K, nSw=1)) 
+# create the corresponding complete data design matrix
+completeDataDesignMatrix(J, X)
+
+@
+
+\subsection{Covariance-Variance-Matrices}
+
+Covariance-Variance matrix are needed besides the mean vector to specify the kind of multivariate normal distribution. The form depends on the kind of multilevel structure. In our examples of cluster randomized studies with measurements over time there are two possibilities: 1) two-level data within cross-sectional studies and 2) three-level data within longitudinal studies. 
+
+\paragraph{CovMat\_Design}
+
+The corresponding covariance-Variance matrices 
+can be performed with the provided \Rfunction{CovMat\_Design()}. The function required the design parameter $K$ number of timepoints, $I$ number of clusters, $J$ number of subjects within each cluster to each timepoint, and also the variances corresponding to each level. If 'sigma.2.q' is not given, then it a cross-sectional, otherwise a longitudinal design is performed.
+
+
+<<CovarianeMatrices, echo=TRUE>>=
+#study design parameter
+K<-3  #number of measurement (or timepoints)
+I<-2 #number of cluster
+J<-2 #number of subjects
+
+### for cross-sectional data
+sigma.1<-0.1
+sigma.3<-0.9
+CovMat_Design(K, J, I, 
+              sigma.1.q=sigma.1, sigma.3.q=sigma.3)
+ 
+### for longitudinal data
+sigma.1<-0.1
+sigma.2<-0.4
+sigma.3<-0.9
+CovMat_Design(K, J, I,
+              sigma.1.q=sigma.1, sigma.2.q=sigma.2, sigma.3.q=sigma.3)
+@
+
+
+%\paragraph{blockMatrixDiagonal}
+
+\subsection{Sample data under a given study design}
+
+We provide a function to sample a complete data set from multivariate normal distribution to mimic data 
+of cluster randomised trials within different study designs, namely parallel, 
+cross-over and stepped wedge design and different type of longitudinal or cross-sectional data.
+
+
+\paragraph{sampleData}
+
+Therefore, we provide the \Rfunction{sampleData()}, where the mean vector and the covariance-variance matrix of the distribution under such studies has to be given.
+
+
+<<Sample data parallel, echo=TRUE, message=FALSE>>=
+#desing parameter
+K<-4  #number of  time points
+J<-25 #number of subjects, each cluster and timepoint
+
+#variances of each level
+sigma.1<-0.1
+sigma.2<-0.4
+sigma.3<-0.9
+
+#regression paramters
+mu.0<-0
+theta<-1
+betas<-rep(0, K-1)
+parameters<-c(mu.0, betas, theta)
+
+##### for parallel study #####
+
+I<-4 #number of cluster
+sw<-2 #number of cluster switches
+# create a design matrix
+X<-designMatrix(nC=I, nT=K, nSw=sw, design="parallel")
+# create the corresponding complete data design matrix
+D<-completeDataDesignMatrix(J, X)
+#performe covariance-Variance matrix for longitudinal design
+V<-CovMat_Design(K, J, I, sigma.1.q=sigma.1, sigma.2.q=sigma.2, sigma.3.q=sigma.3)
+#sample data within the design
+sample.data<-sampleData(type = "long", K=K,J=J,I=I, D=D, V=V, parameters=parameters)
+
+#need the lme4 package for analysis
+library(lme4)
+lmer(val~intervention+measurement + (1|cluster)+(1|subject), data=sample.data)
+@
+
+<<Sample data parallel simulation, echo=FALSE, message=FALSE>>=
+res.all<-NULL
+for(s in 1:50){
+  #sample data within the design
+  sample.data<-sampleData(type = "long", K=K,J=J,I=I, D=D, V=V, parameters=parameters)
+  #analysis of the three-level data
+  lm.res<-lmer(val~intervention+measurement + (1|cluster)+(1|subject), data=sample.data)
+  #random effects
+  res<-as.data.frame(summary(lm.res)$varcor)[,5]
+  names(res)<-as.data.frame(summary(lm.res)$varcor)[,1]
+  #fixed effects
+  res<-c(res,fixef(lm.res))
+  res.all<-rbind(res.all, res)
+}
+
+#boxplot(res.all[,"cluster"])
+mean(res.all[,"cluster"]) #0.9
+#boxplot(res.all[,"subject"])
+mean(res.all[,"subject"])#0.4
+#boxplot(res.all[,"Residual"])
+mean(res.all[,"Residual"])#0.1
+
+#mean(res.all[,"(Intercept)"])#0
+mean(res.all[,"intervention"])#1
+# mean(res.all[,"measurement2"])#0
+# mean(res.all[,"measurement3"])#0
+# mean(res.all[,"measurement4"])#0
+@
+
+<<Sample data cross-over, echo=TRUE, message=FALSE>>=
+# ##### for cross-over study #####
+
+# create a design matrix 
+X<-designMatrix(nC=I, nT=K, nSw=sw, design="cross-over")
+# create the corresponding complete data design matrix
+D<-completeDataDesignMatrix(J, X)
+#performe covariance-Variance matrix for longitudinal design
+V<-CovMat_Design(K, J, I, sigma.1.q=sigma.1, sigma.2.q=sigma.2, sigma.3.q=sigma.3)
+#sample data within the design
+sample.data<-sampleData(type = "long", K=K,J=J,I=I, D=D, V=V, parameters=parameters)
+
+#analysis of the three-level data
+lmer(val~intervention+measurement + (1|cluster)+(1|subject), data=sample.data)
+
+@
+
+<<Sample data cross-over simulation, echo=FALSE, message=FALSE>>=
+res.all<-NULL
+for(s in 1:50){
+  #sample data within the design
+  sample.data<-sampleData(type = "long", K=K,J=J,I=I, D=D, V=V, parameters=parameters)
+  #analysis of the three-level data
+  lm.res<-lmer(val~intervention+measurement + (1|cluster)+(1|subject), data=sample.data)
+  #random effects
+  res<-as.data.frame(summary(lm.res)$varcor)[,5]
+  names(res)<-as.data.frame(summary(lm.res)$varcor)[,1]
+  #fixed effects
+  res<-c(res,fixef(lm.res))
+  res.all<-rbind(res.all, res)
+}
+
+#boxplot(res.all[,"cluster"])
+mean(res.all[,"cluster"]) #0.9
+#boxplot(res.all[,"subject"])
+mean(res.all[,"subject"])#0.4
+#boxplot(res.all[,"Residual"])
+mean(res.all[,"Residual"])#0.1
+
+#mean(res.all[,"(Intercept)"])#0
+mean(res.all[,"intervention"])#1
+# mean(res.all[,"measurement2"])#0
+# mean(res.all[,"measurement3"])#0
+# mean(res.all[,"measurement4"])#0
+@
+
+
+<<Sample data SWD, echo=TRUE, message=FALSE>>=
+##### for SWD study #####
+
+I<-3 #number of cluster
+# create a design matrix
+X<-designMatrix(nC=I, nT=K, nSw=1) 
+# create the corresponding complete data design matrix
+D<-completeDataDesignMatrix(J, X)
+#performe covariance-Variance matrix for cross-sectional design
+V<-CovMat_Design(K, J, I, sigma.1=sigma.1, sigma.3=sigma.3)
+#sample data within the design
+sample.data<-sampleData(type = "cross-sec", K=K,J=J,I=I, D=D, V=V, parameters=parameters)
+
+#analysis of the two-leveldata
+lmer(val~intervention+measurement + (1|cluster), data=sample.data)
+
+@
+
+
+<<Sample data SWD simulation, echo=FALSE, message=FALSE>>=
+res.all<-NULL
+for(s in 1:50){
+  #sample data within the design
+  sample.data<-sampleData(type = "long", K=K,J=J,I=I, D=D, V=V, parameters=parameters)
+  #analysis of the three-level data
+  lm.res<-lmer(val~intervention+measurement + (1|cluster), data=sample.data)
+  #random effects
+  res<-as.data.frame(summary(lm.res)$varcor)[,5]
+  names(res)<-as.data.frame(summary(lm.res)$varcor)[,1]
+  #fixed effects
+  res<-c(res,fixef(lm.res))
+  res.all<-rbind(res.all, res)
+}
+
+#boxplot(res.all[,"cluster"])
+mean(res.all[,"cluster"]) #0.9
+#boxplot(res.all[,"subject"])
+#mean(res.all[,"subject"])#0.4
+#boxplot(res.all[,"Residual"])
+mean(res.all[,"Residual"])#0.1
+
+#mean(res.all[,"(Intercept)"])#0
+mean(res.all[,"intervention"])#1
+# mean(res.all[,"measurement2"])#0
+# mean(res.all[,"measurement3"])#0
+# mean(res.all[,"measurement4"])#0
+@
+
+
+\subsection{Power calculations}
+\paragraph{calcPower.SWD}
+
+\section{Summary}
+
+\end{document}

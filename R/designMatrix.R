@@ -3,7 +3,9 @@
 #' @description create design matrix for a given setup of a stepped wedge design
 #' @param nC number of cluster
 #' @param nT number of timepoints
-#' @param nSw number of cluster switches per time point from control to intervention
+#' @param nSw number of cluster : within parallel recieve the control (nC-nSw receive the intervention), within cross-over recieve the pattern (0, 1) (nC-nSw receive the pattern (1,0)) for nearly the same number of time points, within SWD switches from control to intervention per time point 
+#' @param swP is the time point the cluster cross over the condition in a cross over study, if not given then it is nearly half of the time past
+#' @param design is the study type (parallel, cross-sectional, stepped wedge)
 #' @return design matrix for a given setup of a stepped wedge design
 #' @examples
 #' 
@@ -14,15 +16,36 @@
 #' designMatrix.SWD(nC=I, nT=K, nSw=2)
 #'
 #' @export
-designMatrix.SWD<-function(nC, nT, nSw){
+designMatrix<-function(nC, nT, nSw, swP=NULL, design="SWD"){
   
-  ma<-sapply(1:nT, function(i){
+  
+  if(design=="parallel"){
     
-    noTr<-(i-1)*nSw
-    noC<-nC-noTr
-    return(c(rep(1,noTr), rep(0,noC)))
-  })
-  return(ma)
+    ma<-rbind(t(replicate(nSw, rep(0, nT))), t(replicate(nC-nSw, rep(1, nT))))
+  }
+  
+  if(design=="cross-over"){
+    
+    if(is.null(swP)){swP<-ceiling(nT/2)}
+    swP<-
+    ma<-rbind(t(replicate(nSw, c(rep(0, swP), rep(1,nT-swP)))), 
+              t(replicate(nC-nSw, c(rep(1,swP), rep(0, nT-swP)))))
+  }
+  
+  
+  
+  if(design=="SWD"){
+    ma<-sapply(1:nT, function(i){
+      
+      noTr<-(i-1)*nSw
+      noC<-nC-noTr
+      return(c(rep(1,noTr), rep(0,noC)))
+    })
+  }
+  
+  
+  
+    return(ma)
   
 }
 
@@ -69,16 +92,20 @@ implemMatrix.SWD<-function(nC, nT, nSw, pattern){
 #' @param X  given design matrix
 #' @return design matrix for complete data within design
 #' @examples
-#' 
-#' designMatrix.SWD(5,6,1)
-#'
 #' K<-6  #measurement (or timepoints)
 #' I<-10 #Cluster
 #' J<-2 #number of subjects
-#' X<-designMatrix.SWD(nC=I, nT=K, nSw=2)
+#' X<-designMatrix(nC=I, nT=K, nSw=2)
 #' completeDataDesignMatrix(J, X)
 #' @export
 completeDataDesignMatrix<-function(J, X){
+  
+  if(!is.matrix(X)){
+    stop("X must be a matrix")
+  }
+  if(is.na(J)|is.null(J)|(J==0)){
+    stop("The number of subjects must be at least 1")
+  }
   
   I<-nrow(X)
   K<-ncol(X)
