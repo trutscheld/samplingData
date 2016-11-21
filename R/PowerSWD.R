@@ -1,4 +1,4 @@
-#' Power calculation within stepped wedge design model by Hussey et.al 
+#' Power calculation within stepped wedge design model by Hussey et.al or Heo&Kim 
 #'
 #' @description Calculation of power for a lmm with cluster as random effect, fixed timepoint effects, but set to null, TP number of timepoints, I number of cluster. The design matrix has to be coded by zeros and ones.
 #' @param ThetaEst expected treatment effect
@@ -31,7 +31,7 @@
 #' sigma <- sqrt(2/10)
 #' sigma.alpha <- sqrt(1/10 )
 #' K<- 10 #number of participants within each 'cell'
-#' calcPower.SWD(ThetaEst=delta, Design=DM.new, tauq=sigma.alpha^2, sigmaq=sigma^2, sigmaq.error =sigma.e^2,  noSub=K, type="longitudinal")
+#' calcPower.SWD(ThetaEst=1, Design=DM.new, tauq=sigma.alpha^2, sigmaq=sigma^2, sigmaq.error =sigma.e^2,  noSub=K, type="longitudinal")
 #' @export
 
 calcPower.SWD<-function(ThetaEst,alpha=0.05, Design, sigmaq,  tauq, sigmaq.error =NULL,  noSub=NULL, time=TRUE, type="cross-sectional"){

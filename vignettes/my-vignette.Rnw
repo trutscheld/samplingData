@@ -1,6 +1,7 @@
 \documentclass{article}
 
-\usepackage[a4paper, total={6in, 8in}]{geometry}
+\usepackage[a4paper, total={6.5in, 9in}]{geometry}
+%\usepackage[a4paper, total={6in, 8in}]{geometry}
 
 \usepackage{amsmath}
 \usepackage{booktabs}
@@ -961,32 +962,32 @@ lmer(val~intervention+measurement + (1|cluster)+(1|subject), data=sample.data)
 @
 
 <<Sample data parallel simulation, echo=FALSE, message=FALSE>>=
-res.all<-NULL
-for(s in 1:50){
-  #sample data within the design
-  sample.data<-sampleData(type = "long", K=K,J=J,I=I, D=D, V=V, parameters=parameters)
-  #analysis of the three-level data
-  lm.res<-lmer(val~intervention+measurement + (1|cluster)+(1|subject), data=sample.data)
-  #random effects
-  res<-as.data.frame(summary(lm.res)$varcor)[,5]
-  names(res)<-as.data.frame(summary(lm.res)$varcor)[,1]
-  #fixed effects
-  res<-c(res,fixef(lm.res))
-  res.all<-rbind(res.all, res)
-}
-
-#boxplot(res.all[,"cluster"])
-mean(res.all[,"cluster"]) #0.9
-#boxplot(res.all[,"subject"])
-mean(res.all[,"subject"])#0.4
-#boxplot(res.all[,"Residual"])
-mean(res.all[,"Residual"])#0.1
-
-#mean(res.all[,"(Intercept)"])#0
-mean(res.all[,"intervention"])#1
-# mean(res.all[,"measurement2"])#0
-# mean(res.all[,"measurement3"])#0
-# mean(res.all[,"measurement4"])#0
+# res.all<-NULL
+# for(s in 1:50){
+#   #sample data within the design
+#   sample.data<-sampleData(type = "long", K=K,J=J,I=I, D=D, V=V, parameters=parameters)
+#   #analysis of the three-level data
+#   lm.res<-lmer(val~intervention+measurement + (1|cluster)+(1|subject), data=sample.data)
+#   #random effects
+#   res<-as.data.frame(summary(lm.res)$varcor)[,5]
+#   names(res)<-as.data.frame(summary(lm.res)$varcor)[,1]
+#   #fixed effects
+#   res<-c(res,fixef(lm.res))
+#   res.all<-rbind(res.all, res)
+# }
+# 
+# #boxplot(res.all[,"cluster"])
+# mean(res.all[,"cluster"]) #0.9
+# #boxplot(res.all[,"subject"])
+# mean(res.all[,"subject"])#0.4
+# #boxplot(res.all[,"Residual"])
+# mean(res.all[,"Residual"])#0.1
+# 
+# #mean(res.all[,"(Intercept)"])#0
+# mean(res.all[,"intervention"])#1
+# # mean(res.all[,"measurement2"])#0
+# # mean(res.all[,"measurement3"])#0
+# # mean(res.all[,"measurement4"])#0
 @
 
 <<Sample data cross-over, echo=TRUE, message=FALSE>>=
@@ -1007,32 +1008,32 @@ lmer(val~intervention+measurement + (1|cluster)+(1|subject), data=sample.data)
 @
 
 <<Sample data cross-over simulation, echo=FALSE, message=FALSE>>=
-res.all<-NULL
-for(s in 1:50){
-  #sample data within the design
-  sample.data<-sampleData(type = "long", K=K,J=J,I=I, D=D, V=V, parameters=parameters)
-  #analysis of the three-level data
-  lm.res<-lmer(val~intervention+measurement + (1|cluster)+(1|subject), data=sample.data)
-  #random effects
-  res<-as.data.frame(summary(lm.res)$varcor)[,5]
-  names(res)<-as.data.frame(summary(lm.res)$varcor)[,1]
-  #fixed effects
-  res<-c(res,fixef(lm.res))
-  res.all<-rbind(res.all, res)
-}
-
-#boxplot(res.all[,"cluster"])
-mean(res.all[,"cluster"]) #0.9
-#boxplot(res.all[,"subject"])
-mean(res.all[,"subject"])#0.4
-#boxplot(res.all[,"Residual"])
-mean(res.all[,"Residual"])#0.1
-
-#mean(res.all[,"(Intercept)"])#0
-mean(res.all[,"intervention"])#1
-# mean(res.all[,"measurement2"])#0
-# mean(res.all[,"measurement3"])#0
-# mean(res.all[,"measurement4"])#0
+# res.all<-NULL
+# for(s in 1:50){
+#   #sample data within the design
+#   sample.data<-sampleData(type = "long", K=K,J=J,I=I, D=D, V=V, parameters=parameters)
+#   #analysis of the three-level data
+#   lm.res<-lmer(val~intervention+measurement + (1|cluster)+(1|subject), data=sample.data)
+#   #random effects
+#   res<-as.data.frame(summary(lm.res)$varcor)[,5]
+#   names(res)<-as.data.frame(summary(lm.res)$varcor)[,1]
+#   #fixed effects
+#   res<-c(res,fixef(lm.res))
+#   res.all<-rbind(res.all, res)
+# }
+# 
+# #boxplot(res.all[,"cluster"])
+# mean(res.all[,"cluster"]) #0.9
+# #boxplot(res.all[,"subject"])
+# mean(res.all[,"subject"])#0.4
+# #boxplot(res.all[,"Residual"])
+# mean(res.all[,"Residual"])#0.1
+# 
+# #mean(res.all[,"(Intercept)"])#0
+# mean(res.all[,"intervention"])#1
+# # mean(res.all[,"measurement2"])#0
+# # mean(res.all[,"measurement3"])#0
+# # mean(res.all[,"measurement4"])#0
 @
 
 
@@ -1056,38 +1057,72 @@ lmer(val~intervention+measurement + (1|cluster), data=sample.data)
 
 
 <<Sample data SWD simulation, echo=FALSE, message=FALSE>>=
-res.all<-NULL
-for(s in 1:50){
-  #sample data within the design
-  sample.data<-sampleData(type = "long", K=K,J=J,I=I, D=D, V=V, parameters=parameters)
-  #analysis of the three-level data
-  lm.res<-lmer(val~intervention+measurement + (1|cluster), data=sample.data)
-  #random effects
-  res<-as.data.frame(summary(lm.res)$varcor)[,5]
-  names(res)<-as.data.frame(summary(lm.res)$varcor)[,1]
-  #fixed effects
-  res<-c(res,fixef(lm.res))
-  res.all<-rbind(res.all, res)
-}
-
-#boxplot(res.all[,"cluster"])
-mean(res.all[,"cluster"]) #0.9
-#boxplot(res.all[,"subject"])
-#mean(res.all[,"subject"])#0.4
-#boxplot(res.all[,"Residual"])
-mean(res.all[,"Residual"])#0.1
-
-#mean(res.all[,"(Intercept)"])#0
-mean(res.all[,"intervention"])#1
-# mean(res.all[,"measurement2"])#0
-# mean(res.all[,"measurement3"])#0
-# mean(res.all[,"measurement4"])#0
+# res.all<-NULL
+# for(s in 1:50){
+#   #sample data within the design
+#   sample.data<-sampleData(type = "long", K=K,J=J,I=I, D=D, V=V, parameters=parameters)
+#   #analysis of the three-level data
+#   lm.res<-lmer(val~intervention+measurement + (1|cluster), data=sample.data)
+#   #random effects
+#   res<-as.data.frame(summary(lm.res)$varcor)[,5]
+#   names(res)<-as.data.frame(summary(lm.res)$varcor)[,1]
+#   #fixed effects
+#   res<-c(res,fixef(lm.res))
+#   res.all<-rbind(res.all, res)
+# }
+# 
+# #boxplot(res.all[,"cluster"])
+# mean(res.all[,"cluster"]) #0.9
+# #boxplot(res.all[,"subject"])
+# #mean(res.all[,"subject"])#0.4
+# #boxplot(res.all[,"Residual"])
+# mean(res.all[,"Residual"])#0.1
+# 
+# #mean(res.all[,"(Intercept)"])#0
+# mean(res.all[,"intervention"])#1
+# # mean(res.all[,"measurement2"])#0
+# # mean(res.all[,"measurement3"])#0
+# # mean(res.all[,"measurement4"])#0
 @
 
 
 \subsection{Power calculations}
+
+Power of testing the intervention effect needs the estimated intervention effect and their variance.
+
 \paragraph{calcPower.SWD}
 
-\section{Summary}
+Power calculation within stepped wedge design model by Hussey et.al or Heo \& Kim 
+
+<<power, echo=TRUE>>=
+
+noCl<-10
+noT<-6
+switches<-2
+DM<-designMatrix(noCl,noT,switches)
+sigma.e <- 2
+sigma.alpha <- 2   
+#Power for cross-sectional SWD design by formula of Hussey&Hughes 
+calcPower.SWD(ThetaEst=1,Design=DM, sigmaq=sigma.e^2, tauq=sigma.alpha^2, time=FALSE)
+
+#Power for longitudinal SWD design by formula of Heo&Kim 
+#Example Heo&Kim Table 1
+###Table 1, 1 row
+delta<- 0.3# treatment effect
+DM.new<-NULL
+for(i in 1:dim(DM)[2]){
+DM.new<-cbind(DM.new,DM[,i], DM[,i])
+}
+DM.new
+sigma.e <- sqrt(7/10)
+sigma <- sqrt(2/10)
+sigma.alpha <- sqrt(1/10 )
+K<- 10 #number of participants within each 'cell'
+calcPower.SWD(ThetaEst=delta, Design=DM.new, 
+              tauq=sigma.alpha^2, sigmaq=sigma^2, sigmaq.error =sigma.e^2,  
+              noSub=K, type="longitudinal")
+@
+
+%\section{Summary}
 
 \end{document}
