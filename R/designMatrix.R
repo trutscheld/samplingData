@@ -9,11 +9,11 @@
 #' @return design matrix for a given setup of a stepped wedge design
 #' @examples
 #' 
-#' designMatrix.SWD(5,6,1)
+#' designMatrix(5,6,1)
 #'
 #' K<-6  #measurement (or timepoints)
 #' I<-10 #Cluster
-#' designMatrix.SWD(nC=I, nT=K, nSw=2)
+#' designMatrix(nC=I, nT=K, nSw=2)
 #'
 #' @export
 designMatrix<-function(nC, nT, nSw, swP=NULL, design="SWD"){
