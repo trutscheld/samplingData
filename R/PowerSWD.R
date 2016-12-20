@@ -11,7 +11,12 @@
 #' @param type is of "cross-sectional" (by default)  or "longitudinal" assigns the type of data (2 or 3 level nested structure)
 #' @param time a logical (FALSE, if no time trends are expected, otherwise TRUE) is only relevant for evaluation of cross-sectional data
 #' @return Aproximated power of two tailed test, although the design matrix is fractionated, then power is not valid
-#' #@references \cite{Hussey2007}, \cite{HeoKim2016}
+#' formula used for cross-sectional data provided by Michael A. Hussey and James P. Hughes,
+#' \textit{Design and analysis of stepped wedge cluster randomized trials}, 
+#' Contemporary Clinical Trials(28),2007, 
+#' and for longitudinal data by Heo M., Kim N., Rinke ML., Wylie-Rosett J., 
+#' \textit{Sample size determinations for stepped-wedge clinical trials from a three-level data hierarchy perspective}, 
+#' Stat Methods Med Res., 2016
 #' @examples
 #' noCl<-10
 #' noT<-6
