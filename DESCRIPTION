@@ -8,6 +8,6 @@ Maintainer: Diana Trutschel <Diana.Trutschel@dze.de>
 Description: sampling data from normal distributed data within different study designs
 License: GPL (>= 2)
 RoxygenNote: 5.0.1
-Imports: mvtnorm
-Suggests: knitr, rmarkdown, mvtnorm
+Imports: mvtnorm, lme4
+Suggests: knitr, rmarkdown
 VignetteBuilder: knitr

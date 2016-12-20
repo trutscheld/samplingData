@@ -7,7 +7,6 @@
 #' @param sigma.1.q variance of the lowest level (error variance or within subject variance)
 #' @param sigma.2.q secound level variance (e.g. within cluster and between subject variance)
 #' @param sigma.3.q third level variance (e.g. between cluster variance)
-#' @param type is either cross-sectional or longitudinal 
 #' @return covariance matrix
 #' @examples
 #' K<-6  #measurement (or timepoints)

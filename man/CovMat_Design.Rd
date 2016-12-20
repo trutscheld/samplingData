@@ -2,9 +2,9 @@
 % Please edit documentation in R/CovarianceMatrix.R
 \name{CovMat_Design}
 \alias{CovMat_Design}
-\title{covariance matrix for the normal distribution}
+\title{covariance matrix for the multivriate normal distributed variables}
 \usage{
-CovMat_Design(K, J, I, sigma.1, sigma.2 = NULL, sigma.3, design, type)
+CovMat_Design(K, J, I, sigma.1.q, sigma.2.q = NULL, sigma.3.q)
 }
 \arguments{
 \item{K}{number of timepoints or measurments (design parameter)}
@@ -13,15 +13,11 @@ CovMat_Design(K, J, I, sigma.1, sigma.2 = NULL, sigma.3, design, type)
 
 \item{I}{number of clusters (design parameter)}
 
-\item{sigma.1}{variance of the lowest level (error variance or within subject variance)}
+\item{sigma.1.q}{variance of the lowest level (error variance or within subject variance)}
 
-\item{sigma.2}{secound level variance (e.g. within cluster and between subject variance)}
+\item{sigma.2.q}{secound level variance (e.g. within cluster and between subject variance)}
 
-\item{sigma.3}{third level variance (e.g. between cluster variance)}
-
-\item{design}{is study design, possible "SWD", "case-control" or "cross-over"}
-
-\item{type}{is either cross-sectional or longitudinal}
+\item{sigma.3.q}{third level variance (e.g. between cluster variance)}
 }
 \value{
 covariance matrix
@@ -36,11 +32,11 @@ J<-2 #number of subjects
 
 sigma.1<-0.1
 sigma.3<-0.9
-CovMat_Design(K, J, I,sigma.1=sigma.1, sigma.3=sigma.3, design="SWD", type="cross-sec")
+CovMat_Design(K, J, I,sigma.1.q=sigma.1, sigma.3.q=sigma.3)
 
 sigma.1<-0.1
 sigma.2<-0.4
 sigma.3<-0.9
-CovMat_Design(K, J, I,sigma.1=sigma.1, sigma.2=sigma.2, sigma.3=sigma.3, design="SWD", type="long")
+CovMat_Design(K, J, I,sigma.1.q=sigma.1, sigma.2.q=sigma.2, sigma.3.q=sigma.3)
 }
 

@@ -18,13 +18,10 @@ design matrix for complete data within design
 create design matrix for complete data within design
 }
 \examples{
-
-designMatrix.SWD(5,6,1)
-
 K<-6  #measurement (or timepoints)
 I<-10 #Cluster
 J<-2 #number of subjects
-X<-designMatrix.SWD(nC=I, nT=K, nSw=2)
+X<-designMatrix(nC=I, nT=K, nSw=2)
 completeDataDesignMatrix(J, X)
 }
 

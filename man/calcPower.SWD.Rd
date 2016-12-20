@@ -2,10 +2,11 @@
 % Please edit documentation in R/PowerSWD.R
 \name{calcPower.SWD}
 \alias{calcPower.SWD}
-\title{Power calculation within stepped wedge design model by Hussey et.al}
+\title{Power calculation within stepped wedge design model by Hussey et.al or Heo&Kim}
 \usage{
-calcPower.SWD(ThetaEst, alpha = 0.05, Design, sigmaq, sigma.2 = NULL, tauq,
-  time)
+calcPower.SWD(ThetaEst, alpha = 0.05, Design, sigmaq, tauq,
+  sigmaq.error = NULL, noSub = NULL, time = TRUE,
+  type = "cross-sectional")
 }
 \arguments{
 \item{ThetaEst}{expected treatment effect}
@@ -14,17 +15,26 @@ calcPower.SWD(ThetaEst, alpha = 0.05, Design, sigmaq, sigma.2 = NULL, tauq,
 
 \item{Design}{design matrix for a given SWD model}
 
-\item{sigmaq}{within cluster variance}
-
-\item{sigma.2}{power for cross-sectional}
+\item{sigmaq}{within cluster variance(between subject variance)}
 
 \item{tauq}{between cluster variance}
 
-\item{time}{a logical (FALSE, if no time trends are expected, otherwise TRUE)}
+\item{sigmaq.error}{within subject variance/error variance}
+
+\item{noSub}{number of subjects within each cluster and each timepoint (for all an equal size)}
+
+\item{time}{a logical (FALSE, if no time trends are expected, otherwise TRUE) is only relevant for evaluation of cross-sectional data}
+
+\item{type}{is of "cross-sectional" (by default)  or "longitudinal" assigns the type of data (2 or 3 level nested structure)}
 }
 \value{
 Aproximated power of two tailed test, although the design matrix is fractionated, then power is not valid
-#@references \cite{Hussey2007}
+formula used for cross-sectional data provided by Michael A. Hussey and James P. Hughes,
+Design and analysis of stepped wedge cluster randomized trials, 
+Contemporary Clinical Trials(28),2007, 
+and for longitudinal data by Heo M., Kim N., Rinke ML., Wylie-Rosett J., 
+Sample size determinations for stepped-wedge clinical trials from a three-level data hierarchy perspective, 
+Stat Methods Med Res., 2016
 }
 \description{
 Calculation of power for a lmm with cluster as random effect, fixed timepoint effects, but set to null, TP number of timepoints, I number of cluster. The design matrix has to be coded by zeros and ones.
@@ -33,10 +43,21 @@ Calculation of power for a lmm with cluster as random effect, fixed timepoint ef
 noCl<-10
 noT<-6
 switches<-2
-DM<-designMatrix.SWD(noCl,noT,switches)
+DM<-designMatrix(noCl,noT,switches)
 sigma.e <- 2
-sigma.alpha <- 2    
+sigma.alpha <- 2   
+#Power for cross-sectional SWD design by formula of Hussey&Hughes 
 calcPower.SWD(ThetaEst=1,Design=DM, sigmaq=sigma.e^2, tauq=sigma.alpha^2, time=FALSE)
 calcPower.SWD(ThetaEst=1,Design=DM, sigmaq=sigma.e^2, tauq=sigma.alpha^2, time=TRUE)
+#Power for longitudinal SWD design by formula of Heo&Kim 
+DM.new<-NULL
+for(i in 1:dim(DM)[2]){
+DM.new<-cbind(DM.new,DM[,i], DM[,i])
+}
+sigma.e <- sqrt(7/10)
+sigma <- sqrt(2/10)
+sigma.alpha <- sqrt(1/10 )
+K<- 10 #number of participants within each 'cell'
+calcPower.SWD(ThetaEst=1, Design=DM.new, tauq=sigma.alpha^2, sigmaq=sigma^2, sigmaq.error =sigma.e^2,  noSub=K, type="longitudinal")
 }
 
