@@ -13,7 +13,7 @@
 
 
 
-\title{Vignette to package 'samplingData'}
+\title{Vignette to package 'samplingDataCRT'}
 \author{Diana Trutschel}
 \date{}
 \begin{document}
@@ -26,16 +26,16 @@
 \subsection{Objective}
 
 To evaluate for example the match of different statistical model often simulation studies are used. 
-In simulations the underlying data can be from a real study, but also simulated data given a distribution. 
+In simulations the underlying data can be from a real study, but also from simulated data given a specific distribution. 
 For this purpose we provide a package to sampling data from normal distribution to mimic data of cluster randomised trials within different study designs, namely parallel, cross-over and stepped wedge design.
-Besides a traditional design collects sampling units within different groups, which should be compared, in the past years multilevel design, which collect additional units nested within the original sampling units, becomes very popular. Measurements of different patients nested within hospitals, also assigned as clusters, is one example of a two-level nested data. Another example of nested structures are the repeated measurements of patients. Furthermore, three-level nested data is obtained for example by the  combination of both nesting examples. The complete data of such examples are then a multivariate distributed. The aim of this package is to provide a easy implementation of sampling multivariate normal distributed data for further investigations. Additionally, the requires power calculations for studies under these specific designs are given.
+Besides a traditional design collects sampling units within different groups, which should be compared, in the past years multilevel design, which collect additional units nested within the original sampling units, becomes very popular. Measurements of different patients nested within hospitals, also assigned as clusters, is one example of a two-level nested data. Another example of nested structures are the repeated measurements of patients. Furthermore, three-level nested data is obtained for example by the  combination of both nesting examples. The complete data of such examples is then multivariate distributed. The aim of this package is to provide a easy implementation of sampling multivariate normal distributed data for further investigations. Additionally, the requires power calculation for a special studie design, the stepped wedge desing, is given.
 
 \subsection{Different study types}
 
-\paragraph{Parallel, cross-over an stepped wedge designs.}
+\paragraph{Parallel, cross-over and stepped wedge designs.}
 
-With this package we provide data sampling within three common used study design types: parallel, cross-over an stepped wedge designs (SWD). \ref{Tab.Studytype} shows examples of these kind of types, each with  $C=6$ cluster, followed over $T=4$ time points.
-A parallel design is present, when two groups of treatments are given so that one group receives only the first while another group receives only second.
+With this package we provide data sampling within three common used study design types: parallel, cross-over an stepped wedge designs (SWD). Table~\ref{Tab.Studytype} shows examples of these kind of types, each with  $C=6$ cluster, followed over $T=4$ time points.
+A parallel design is present, when two groups of treatments are given so that one group receives only the first treatment while another group receives only the second.
 In contrast to the parallel design in a crossover design trail each experimental unit (patient) receives different treatments during the different time points.
 Hence, it is a repeated measurements design. 
 An alternative and more popular becoming design is the stepped wedge design. Here, the intervntion is rollout to different units sequential but random over different time points.
@@ -84,18 +84,18 @@ An alternative and more popular becoming design is the stepped wedge design. Her
 \bottomrule
 \end{tabular}
 %\end{small}
-\caption{Examples of different study design type of A) parallel, B) cross-over, and C) stepped wedge designs.}
+\caption{Examples of different study design types: A) parallel, B) cross-over, and C) stepped wedge design.}
 \label{Tab.Studytype}
 \end{table}
 
 \paragraph{Cross-sectional versus longitudinal.}
 
-In trials often subjects within clusters are followed over a period of time and measured to several measurment points. Two kinds of data collection is then possible: 1) cross-sectional data, if at each time point the measurment units (subjects) are different to the units at another timepoints, or 2) longitudinal data, the measurment units (subjects) are the same to all timepoints (known as repeated measurements). Hence, if it is a trail with $C$ clusters and a clustersize of $N$ each, which are follwed over $T$ timepoints, then the total number of included subjects is $C\times N$ in a cross-sectional and $C\times T\times N$ in a longitudinal study.
+In trials often subjects within clusters are followed over a period of time and measured to several measurment points. Two kinds of data collection is then possible: 1) cross-sectional data, if at each time point the measurment units (subjects) are different to the units at another timepoints, or 2) longitudinal data, the measurment units (subjects) are the same to all timepoints (known as repeated measurements). Hence, if it is a trail with $C$ clusters and a clustersize of $N$ each, which are follwed over $T$ timepoints, then the total number of included subjects is $C\times T\times N$ in a cross-sectional and $C\times N$ in a longitudinal study.
 
 \section{Multivariate normal distributed data for multilevel data}
 
-For the situation of a cluster-randomized trail with T the number of time points, 
-C the number of clusters and N the number of patients per cluster 
+For the situation of a cluster-randomized trail with T number of time points, 
+C number of clusters and N number of patients per cluster (and time point, when it is a cross-sectional) 
 the complete dataset can be written as the vector of responses $\overrightarrow{Y} = \left\{Y_{ijk}\right\}$ 
 of length $T \times C\times N$, which is sampled from a multidimensional normal distribution:
 
@@ -196,7 +196,7 @@ For example with $I=4$ cluster and $K=3$ measurments, hence only two cluster for
 
 and the matrix $Z_{i}$ for cluster 1 and 2 is then 
 \begin{eqnarray*}
-Z_{1} &=&  \bordermatrix{
+Z_{i \in (1,2)} &=&  \bordermatrix{
   						& \mu	&\beta_{1}	& \beta_{2}	& \beta_{3}  &\theta\cr
 \textrm{time point 1} 	& 1		&1			&0		 	& 0& 0\cr
 \textrm{time point 2} 	&1 		&0 			&1			& 0& 0\cr
@@ -207,7 +207,7 @@ Z_{1} &=&  \bordermatrix{
 
 and for cluster 3 and 4 
 \begin{eqnarray*}
-Z_{1} &=&  \bordermatrix{
+Z_{i \in (3,4)} &=&  \bordermatrix{
     					& \mu	&\beta_{1}	& \beta_{2}	& \beta_{3}  &\theta\cr
 \textrm{time point 1} 	& 1		&1			&0		 	& 0& 1\cr
 \textrm{time point 2} 	&1 		&0 			&1			& 0& 1\cr
@@ -225,8 +225,10 @@ Z&=&\bordermatrix{
 \textrm{cluster 2}	&Z_{2} 		\cr
 \textrm{cluster 3}  &Z_{3} 		\cr
 \textrm{cluster 4}  &Z_{4}   	\cr
-}\\
-&=&\bordermatrix{
+}
+% \\
+% &=&
+=\bordermatrix{
   					& \cr
 \textrm{cluster 1 subject 1} 	& Z_{1j}\cr
 \textrm{cluster 1 subject 2}	&Z_{1j} 		\cr
@@ -345,7 +347,7 @@ For example with $I=4$ cluster and $K=4$ measurments, two cluster each switches 
 
 and the matrix $Z_{i}$ for cluster 1 and 2 is then 
 \begin{eqnarray*}
-Z_{1} &=&  \bordermatrix{
+Z_{i \in (1,2)} &=&  \bordermatrix{
   						& \mu	&\beta_{1}	& \beta_{2}	& \beta_{3}  &\theta\cr
 \textrm{time point 1} 	& 1		&1			&0		 	& 0& 0\cr
 \textrm{time point 2} 	&1 		&0 			&1			& 0& 0\cr
@@ -356,7 +358,7 @@ Z_{1} &=&  \bordermatrix{
 
 and for cluster 3 and 4  
 \begin{eqnarray*}
-Z_{1} &=&  \bordermatrix{
+Z_{i \in (3,4)} &=&  \bordermatrix{
     					& \mu	&\beta_{1}	& \beta_{2}	& \beta_{3}  &\theta\cr
 \textrm{time point 1} 	& 1		&1			&0		 	& 0& 1\cr
 \textrm{time point 2} 	&1 		&0 			&1			& 0& 1\cr
@@ -374,8 +376,8 @@ Z&=&\bordermatrix{
 \textrm{cluster 2}	&Z_{2} 		\cr
 \textrm{cluster 3}  &Z_{3} 		\cr
 \textrm{cluster 4}  &Z_{4}   	\cr
-}\\
-&=&\bordermatrix{
+}
+=\bordermatrix{
   					& \cr
 \textrm{cluster 1 subject 1} 	& Z_{1j}\cr
 \textrm{cluster 1 subject 2}	&Z_{1j} 		\cr
@@ -512,8 +514,7 @@ Z&=&\bordermatrix{
 \textrm{cluster 1} 	& Z_{1}\cr
 \textrm{cluster 2}	&Z_{2} 		\cr
 \textrm{cluster 3}  &Z_{3} 		\cr
-}\\
-&=&\bordermatrix{
+}=\bordermatrix{
   					& \cr
 \textrm{cluster 1 subject 1} 	& Z_{1j}\cr
 \textrm{cluster 1 subject 2}	&Z_{1j} 		\cr
@@ -808,7 +809,7 @@ Use the following Package under GPL and load to the library:
 
 <<loadPAckage,echo=TRUE>>=
 #load the package
-library(samplingData)
+library(samplingDataCRT)
 @
 
 
@@ -820,7 +821,7 @@ Table\ref{Tab.Studytype} shows such design matrices or different study types.
 
 In contrast each row of the design matrix of the complete data of the trail represents a measurement with the successive columns corresponding to the variables (effects) and their specific values for that. The design matrix of the complete data corresponds to the fixed part of the multivariate normal distribution. 
 
-All matrices could also be implemented manually using the function \Rfunction{matrix()}, but, instead of ordering an amount of zeros and ones, the provided functions in this package make it easy to recieve this complex matrices for simple study designs using only some parameters (balanced, equal number of clusters per switch).
+All matrices could also be implemented manually using the function \Rfunction{matrix()}, but, instead of ordering an amount of zeros and ones, the provided functions in this package make it easy to recieve this complex matrices for simple study designs using only some parameters (for balanced data and equal number of clusters per switch).
 
 \paragraph{designMatrix}
 
@@ -1088,11 +1089,11 @@ lmer(val~intervention+measurement + (1|cluster), data=sample.data)
 
 \subsection{Power calculations}
 
-Power of testing the intervention effect needs the estimated intervention effect and their variance.
+Power of testing the intervention effect is provided for SWD. The function needs the estimated intervention effect and their variance.
 
 \paragraph{calcPower.SWD}
 
-Power calculation within stepped wedge design model by Hussey et.al or Heo \& Kim 
+Power calculation within stepped wedge design model by Hussey \& Hughes \footnote{Michael A. Hussey and James P. Hughes,\textit{Design and analysis of stepped wedge cluster randomized trials}, Contemporary Clinical Trials(28),2007} for cross-sectional and Heo \& Kim \footnote{Heo M., Kim N., Rinke ML., Wylie-Rosett J., \textit{Sample size determinations for stepped-wedge clinical trials from a three-level data hierarchy perspective}, Stat Methods Med Res., 2016} for longitudinal data. 
 
 <<power, echo=TRUE>>=
 
@@ -1147,7 +1148,7 @@ calcPower.SWD(ThetaEst=delta, Design=DM.new,
   \item[] \textit{nC} Number of clusters
 \item[] \textit{nT} Number of timepoint
 \item[] \textit{nSw} number of clusters switches from control to treatment at each timepoint
-\item[] \textit{pattern} a vector for grade of intervention implementation pattern, which gives the derivation from 100 percent effectiveness over time
+\item[] \textit{pattern} a vector for grade of intervention implementation pattern, which gives the deviation from 100 percent effectiveness over time
 \item[] \textbf{return} 
 \item[] Design matrix for SWD model under a grade of intervention implementation pattern
 \end{itemize}
@@ -1175,7 +1176,6 @@ calcPower.SWD(ThetaEst=delta, Design=DM.new,
 \item[] \textit{sigma.1.q} variance of the lowest level (error variance or within subject variance)
 \item[] \textit{sigma.2.q} secound level variance (e.g. within cluster and between subject variance)
 \item[] \textit{sigma.3.q} third level variance (e.g. between cluster variance)
-\item[] \textit{type} is either cross-sectional or longitudinal 
 \item[] \textbf{return} 
 \item[] covariance matrix
 \end{itemize}
@@ -1212,7 +1212,7 @@ calcPower.SWD(ThetaEst=delta, Design=DM.new,
 \item[] \textit{type} is of "cross-sectional" (by default)  or "longitudinal" assigns the type of data (2 or 3 level nested structure)
 \item[] \textit{time} a logical (FALSE, if no time trends are expected, otherwise TRUE) is only relevant for evaluation of cross-sectional data
 \item[] \textbf{return} 
-\item[] Aproximated power of two tailed test, although the design matrix is fractionated, then power is not valid, formula used for cross-sectional data provided by \footnote{Michael A. Hussey and James P. Hughes,\textit{Design and analysis of stepped wedge cluster randomized trials}, Contemporary Clinical Trials(28),2007}, and for longitudinal data by \footnote{Heo M., Kim N., Rinke ML., Wylie-Rosett J., \textit{Sample size determinations for stepped-wedge clinical trials from a three-level data hierarchy perspective}, Stat Methods Med Res., 2016}
+\item[] Aproximated power of two tailed test, although the design matrix is fractionated, then power is not valid, formula used for cross-sectional data provided by Hussey \& Hughes \footnote{Michael A. Hussey and James P. Hughes,\textit{Design and analysis of stepped wedge cluster randomized trials}, Contemporary Clinical Trials(28),2007}, and for longitudinal data by Heo \& Kim \footnote{Heo M., Kim N., Rinke ML., Wylie-Rosett J., \textit{Sample size determinations for stepped-wedge clinical trials from a three-level data hierarchy perspective}, Stat Methods Med Res., 2016}
 \end{itemize}
 
 

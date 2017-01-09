@@ -1,4 +1,4 @@
-Package: samplingData
+Package: samplingDataCRT
 Type: Package
 Title: Sampling data within different study designs
 Version: 1.0
