@@ -5,7 +5,7 @@ Version: 1.0
 Date: 2017-01-20
 Author: Diana Trutschel, Hendrik Treutler
 Maintainer: Diana Trutschel <Diana.Trutschel@dzne.de>
-Description: sampling data from normal distributed data within different study designs for cluster randomized trails
+Description: Package provides the possibility to sampling complete datasets from a normal distribution to simulate cluster randomized trails for different study designs. 
 License: GPL (>= 2)
 RoxygenNote: 5.0.1
 Imports: mvtnorm, lme4
