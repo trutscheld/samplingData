@@ -2,7 +2,7 @@
 % Please edit documentation in R/SamplingDesign.R
 \name{sampleData}
 \alias{sampleData}
-\title{#' Sampling Response of individuals within a SWD model}
+\title{Sampling Response of individuals within a SWD model}
 \usage{
 sampleData(type, K, J, I, D, A = NULL, V, parameters)
 }

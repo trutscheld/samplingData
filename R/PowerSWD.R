@@ -41,7 +41,9 @@
 calcPower.SWD<-function(ThetaEst,alpha=0.05, Design, sigmaq,  tauq, sigmaq.error =NULL,  noSub=NULL, time=TRUE, type="cross-sectional"){
   
   #quantile of the standard normal distribution function
-  Z<-qnorm(p=1-alpha/2)
+  if (requireNamespace("stats", quietly = TRUE)) {
+    Z<-stats::qnorm(p=1-alpha/2)
+  }
   
   if(type=="cross-sectional"){#power for cross-sectional, formula by Hussey&Hughes
     
@@ -100,7 +102,9 @@ calcPower.SWD<-function(ThetaEst,alpha=0.05, Design, sigmaq,  tauq, sigmaq.error
   
   #calculated power by Z distributed value, 
   #for both methods the same, only different Variances of treatment effect
-  power<-pnorm(q=(ThetaEst/sqrt(varTheta)-Z))
+  if (requireNamespace("stats", quietly = TRUE)) {
+    power<-stats::pnorm(q=(ThetaEst/sqrt(varTheta)-Z))
+  }
   return(power)
   
   

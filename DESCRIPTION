@@ -8,6 +8,6 @@ Maintainer: Diana Trutschel <Diana.Trutschel@dzne.de>
 Description: Package provides the possibility to sampling complete datasets from a normal distribution to simulate cluster randomized trails for different study designs. 
 License: GPL (>= 2)
 RoxygenNote: 5.0.1
-Imports: mvtnorm, lme4
+Imports: mvtnorm, lme4, stats
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
