@@ -29,11 +29,15 @@
 #' @export
 sampleData<-function(type, K,J,I, D, A=NULL, V, parameters ){
   
-  library("mvtnorm")
+  #library("mvtnorm")
+  
   if(is.null(A)){A<-D}
   #sample I cluster from distribution of cluster, each have the same mean vector
   mean.vec<-A%*%parameters
-  sample<-rmvnorm(1, mean=mean.vec, sigma=V) #row = number of subjects. # col = number of rep.Meas
+  
+  if (requireNamespace("mvtnorm", quietly = TRUE)) {
+    sample<- mvtnorm::rmvnorm(1, mean=mean.vec, sigma=V) #row = number of subjects. # col = number of rep.Meas
+  }  
   
   if(type=="cross-sec"){
     
