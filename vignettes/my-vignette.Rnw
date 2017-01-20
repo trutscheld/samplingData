@@ -814,6 +814,7 @@ Use the following Package under GPL and load to the library:
 <<loadPAckage,echo=TRUE>>=
 #load the package
 library(samplingDataCRT)
+library(lme4)
 @
 
 
@@ -906,14 +907,14 @@ J<-2 #number of subjects
 ### for cross-sectional data
 sigma.1<-0.1
 sigma.3<-0.9
-CovMat_Design(K, J, I, 
+CovMat.Design(K, J, I, 
               sigma.1.q=sigma.1, sigma.3.q=sigma.3)
  
 ### for longitudinal data
 sigma.1<-0.1
 sigma.2<-0.4
 sigma.3<-0.9
-CovMat_Design(K, J, I,
+CovMat.Design(K, J, I,
               sigma.1.q=sigma.1, sigma.2.q=sigma.2, sigma.3.q=sigma.3)
 @
 
@@ -957,12 +958,11 @@ X<-designMatrix(nC=I, nT=K, nSw=sw, design="parallel")
 # create the corresponding complete data design matrix
 D<-completeDataDesignMatrix(J, X)
 #performe covariance-Variance matrix for longitudinal design
-V<-CovMat_Design(K, J, I, sigma.1.q=sigma.1, sigma.2.q=sigma.2, sigma.3.q=sigma.3)
+V<-CovMat.Design(K, J, I, sigma.1.q=sigma.1, sigma.2.q=sigma.2, sigma.3.q=sigma.3)
 #sample data within the design
 sample.data<-sampleData(type = "long", K=K,J=J,I=I, D=D, V=V, parameters=parameters)
 
 #need the lme4 package for analysis
-library(lme4)
 lmer(val~intervention+measurement + (1|cluster)+(1|subject), data=sample.data)
 @
 
@@ -1003,7 +1003,7 @@ X<-designMatrix(nC=I, nT=K, nSw=sw, design="cross-over")
 # create the corresponding complete data design matrix
 D<-completeDataDesignMatrix(J, X)
 #performe covariance-Variance matrix for longitudinal design
-V<-CovMat_Design(K, J, I, sigma.1.q=sigma.1, sigma.2.q=sigma.2, sigma.3.q=sigma.3)
+V<-CovMat.Design(K, J, I, sigma.1.q=sigma.1, sigma.2.q=sigma.2, sigma.3.q=sigma.3)
 #sample data within the design
 sample.data<-sampleData(type = "long", K=K,J=J,I=I, D=D, V=V, parameters=parameters)
 
@@ -1051,7 +1051,7 @@ X<-designMatrix(nC=I, nT=K, nSw=1)
 # create the corresponding complete data design matrix
 D<-completeDataDesignMatrix(J, X)
 #performe covariance-Variance matrix for cross-sectional design
-V<-CovMat_Design(K, J, I, sigma.1=sigma.1, sigma.3=sigma.3)
+V<-CovMat.Design(K, J, I, sigma.1=sigma.1, sigma.3=sigma.3)
 #sample data within the design
 sample.data<-sampleData(type = "cross-sec", K=K,J=J,I=I, D=D, V=V, parameters=parameters)
 

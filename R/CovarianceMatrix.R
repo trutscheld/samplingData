@@ -1,6 +1,6 @@
 #' covariance matrix for the multivriate normal distributed variables
 #' 
-#' @description covariance matrix fof the normal distribution under cluster randomized study type given a design and a type
+#' @description covariance matrix of the normal distribution under cluster randomized study type given a design and a type
 #' @param K number of timepoints or measurments (design parameter)
 #' @param J number of subjects
 #' @param I number of clusters (design parameter)
@@ -15,14 +15,14 @@
 #' 
 #' sigma.1<-0.1
 #' sigma.3<-0.9
-#' CovMat_Design(K, J, I,sigma.1.q=sigma.1, sigma.3.q=sigma.3)
+#' CovMat.Design(K, J, I,sigma.1.q=sigma.1, sigma.3.q=sigma.3)
 #' 
 #' sigma.1<-0.1
 #' sigma.2<-0.4
 #' sigma.3<-0.9
-#' CovMat_Design(K, J, I,sigma.1.q=sigma.1, sigma.2.q=sigma.2, sigma.3.q=sigma.3)
+#' CovMat.Design(K, J, I,sigma.1.q=sigma.1, sigma.2.q=sigma.2, sigma.3.q=sigma.3)
 #' @export
-CovMat_Design<-function(K, J, I, sigma.1.q, sigma.2.q=NULL, sigma.3.q){
+CovMat.Design<-function(K, J, I, sigma.1.q, sigma.2.q=NULL, sigma.3.q){
 
     
     if(is.null(sigma.2.q)){ #type=="cross-sec"

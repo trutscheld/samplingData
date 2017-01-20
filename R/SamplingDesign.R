@@ -19,7 +19,7 @@
 #' sigma.1<-0.1
 #' sigma.3<-0.9
 #' type<-"cross-sec"
-#' V<-CovMat_Design(K, J, I, sigma.1=sigma.1, sigma.3=sigma.3)
+#' V<-CovMat.Design(K, J, I, sigma.1=sigma.1, sigma.3=sigma.3)
 #' mu.0<-0
 #' theta<-1
 #' betas<-rep(0, K-1)
