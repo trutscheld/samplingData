@@ -1,5 +1,4 @@
-
-#' #' Sampling Response of individuals within a SWD model
+#' Sampling Response of individuals within a SWD model
 #'
 #' @description Sample data (response) for given numbers of individuals by given a model (of a parallel, cross-sectional, stepped wedge design study) 
 #' @param type of the design is either cross-sectional ("cross-sec") or longitudinal ("longitudinal")

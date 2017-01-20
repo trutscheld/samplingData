@@ -1,11 +1,11 @@
 Package: samplingDataCRT
 Type: Package
-Title: Sampling data within different study designs
+Title: 'Sampling Data Within Different Study Designs For Cluster Randomized Trials
 Version: 1.0
 Date: 2016-10-05
 Author: Diana Trutschel, Hendrik Treutler
 Maintainer: Diana Trutschel <Diana.Trutschel@dzne.de>
-Description: sampling data from normal distributed data within different study designs
+Description: sampling data from normal distributed data within different study designs for cluster randomized trails
 License: GPL (>= 2)
 RoxygenNote: 5.0.1
 Imports: mvtnorm, lme4

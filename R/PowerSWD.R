@@ -38,7 +38,6 @@
 #' K<- 10 #number of participants within each 'cell'
 #' calcPower.SWD(ThetaEst=1, Design=DM.new, tauq=sigma.alpha^2, sigmaq=sigma^2, sigmaq.error =sigma.e^2,  noSub=K, type="longitudinal")
 #' @export
-
 calcPower.SWD<-function(ThetaEst,alpha=0.05, Design, sigmaq,  tauq, sigmaq.error =NULL,  noSub=NULL, time=TRUE, type="cross-sectional"){
   
   #quantile of the standard normal distribution function
