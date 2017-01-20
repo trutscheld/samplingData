@@ -1,6 +1,8 @@
-\VignetteIndexEntry{Vignette to package 'samplingDataCRT'} \VignetteDepends{}
-\VignetteKeywords{TODO: keywords}
-\VignettePackage{samplingDataCRT}
+% \VignetteIndexEntry{Vignette to package 'samplingDataCRT'} 
+%\VignetteDepends{}
+% \VignetteKeywords{TODO: keywords}
+% \VignettePackage{samplingDataCRT}
+%\VignetteEngine{knitr::knitr}
 
 \documentclass{article}
 
