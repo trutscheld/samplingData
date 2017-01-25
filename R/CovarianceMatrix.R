@@ -5,9 +5,9 @@
 #' @param J number of subjects
 #' @param I number of clusters (design parameter)
 #' @param sigma.1.q variance of the lowest level (error variance or within subject variance)
-#' @param sigma.2.q secound level variance (e.g. within cluster and between subject variance)
+#' @param sigma.2.q secound level variance (e.g. within cluster and between subject variance),  by default NULL and then a cross-sectional type
 #' @param sigma.3.q third level variance (e.g. between cluster variance)
-#' @return covariance matrix
+#' @return V covariance matrix
 #' @examples
 #' K<-6  #measurement (or timepoints)
 #' I<-10 #Cluster

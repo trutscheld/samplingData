@@ -1,10 +1,10 @@
-% \VignetteIndexEntry{Vignette to package 'samplingDataCRT'} 
-%\VignetteDepends{}
-% \VignetteKeywords{TODO: keywords}
-% \VignettePackage{samplingDataCRT}
-%\VignetteEngine{knitr::knitr}
 
 \documentclass{article}
+
+% \VignetteIndexEntry{Vignette to package 'samplingDataCRT'}
+% \VignettePackage{samplingDataCRT}
+% \VignetteKeywords{TODO: sampling, multidimensional normal distribution, study design, cluster randomized}
+% \VignetteEngine{knitr::knitr}
 
 \usepackage[a4paper, total={6.5in, 9in}]{geometry}
 %\usepackage[a4paper, total={6in, 8in}]{geometry}
@@ -894,10 +894,10 @@ completeDataDesignMatrix(J, X)
 
 Covariance-Variance matrix are needed besides the mean vector to specify the kind of multivariate normal distribution. The form depends on the kind of multilevel structure. In our examples of cluster randomized studies with measurements over time there are two possibilities: 1) two-level data within cross-sectional studies and 2) three-level data within longitudinal studies. 
 
-\paragraph{CovMat\_Design}
+\paragraph{CovMat.Design}
 
 The corresponding covariance-Variance matrices 
-can be performed with the provided \Rfunction{CovMat\_Design()}. The function required the design parameter $K$ number of timepoints, $I$ number of clusters, $J$ number of subjects within each cluster to each timepoint, and also the variances corresponding to each level. If 'sigma.2.q' is not given, then it a cross-sectional, otherwise a longitudinal design is performed.
+can be performed with the provided \Rfunction{CovMat.Design()}. The function required the design parameter $K$ number of timepoints, $I$ number of clusters, $J$ number of subjects within each cluster to each timepoint, and also the variances corresponding to each level. If 'sigma.2.q' is not given, then it a cross-sectional, otherwise a longitudinal design is performed.
 
 
 <<CovarianeMatrices, echo=TRUE>>=
@@ -965,7 +965,7 @@ V<-CovMat.Design(K, J, I, sigma.1.q=sigma.1, sigma.2.q=sigma.2, sigma.3.q=sigma.
 sample.data<-sampleData(type = "long", K=K,J=J,I=I, D=D, V=V, parameters=parameters)
 
 #need the lme4 package for analysis
-lmer(val~intervention+measurement + (1|cluster)+(1|subject), data=sample.data)
+lme4::lmer(val~intervention+measurement + (1|cluster)+(1|subject), data=sample.data)
 @
 
 <<Sample data parallel simulation, echo=FALSE, message=FALSE>>=
@@ -1010,7 +1010,7 @@ V<-CovMat.Design(K, J, I, sigma.1.q=sigma.1, sigma.2.q=sigma.2, sigma.3.q=sigma.
 sample.data<-sampleData(type = "long", K=K,J=J,I=I, D=D, V=V, parameters=parameters)
 
 #analysis of the three-level data
-lmer(val~intervention+measurement + (1|cluster)+(1|subject), data=sample.data)
+lme4::lmer(val~intervention+measurement + (1|cluster)+(1|subject), data=sample.data)
 
 @
 
@@ -1058,7 +1058,7 @@ V<-CovMat.Design(K, J, I, sigma.1=sigma.1, sigma.3=sigma.3)
 sample.data<-sampleData(type = "cross-sec", K=K,J=J,I=I, D=D, V=V, parameters=parameters)
 
 #analysis of the two-leveldata
-lmer(val~intervention+measurement + (1|cluster), data=sample.data)
+lme4::lmer(val~intervention+measurement + (1|cluster), data=sample.data)
 
 @
 
@@ -1171,7 +1171,7 @@ calcPower.SWD(ThetaEst=delta, Design=DM.new,
 \item[] design matrix for complete data within design
 \end{itemize}
 
-\paragraph{CovMat\_DesignCovMat\_Design}
+\paragraph{CovMat.Design}
 \begin{itemize}
   \item[] \textbf{description}  
   \item[] covariance matrix fof the normal distribution under cluster randomized study type given a design and a type

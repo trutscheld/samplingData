@@ -25,7 +25,7 @@ calcPower.SWD(ThetaEst, alpha = 0.05, Design, sigmaq, tauq,
 
 \item{time}{a logical (FALSE, if no time trends are expected, otherwise TRUE) is only relevant for evaluation of cross-sectional data}
 
-\item{type}{is of "cross-sectional" (by default)  or "longitudinal" assigns the type of data (2 or 3 level nested structure)}
+\item{type}{is of cross-sectional (by default)  or longitudinal assigns the type of data (2 or 3 level nested structure)}
 }
 \value{
 Aproximated power of two tailed test, although the design matrix is fractionated, then power is not valid
@@ -54,10 +54,10 @@ DM.new<-NULL
 for(i in 1:dim(DM)[2]){
 DM.new<-cbind(DM.new,DM[,i], DM[,i])
 }
-sigma.e <- sqrt(7/10)
-sigma <- sqrt(2/10)
-sigma.alpha <- sqrt(1/10 )
+s.e <- sqrt(7/10)
+s <- sqrt(2/10)
+s.a <- sqrt(1/10 )
 K<- 10 #number of participants within each 'cell'
-calcPower.SWD(ThetaEst=1, Design=DM.new, tauq=sigma.alpha^2, sigmaq=sigma^2, sigmaq.error =sigma.e^2,  noSub=K, type="longitudinal")
+calcPower.SWD(ThetaEst=1, Design=DM.new, s.a^2, s^2, s.e^2,  noSub=K,  type="longitudinal")
 }
 

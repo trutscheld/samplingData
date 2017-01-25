@@ -7,7 +7,7 @@
 sampleData(type, K, J, I, D, A = NULL, V, parameters)
 }
 \arguments{
-\item{type}{of the design is either cross-sectional ("cross-sec") or longitudinal ("longitudinal")}
+\item{type}{of the design is either cross-sectional (cross-sec) or longitudinal (longitudinal)}
 
 \item{K}{number of timepoints or measurments (design parameter)}
 

@@ -8,7 +8,7 @@
 #' @param sigmaq within cluster variance(between subject variance)
 #' @param sigmaq.error within subject variance/error variance
 #' @param noSub number of subjects within each cluster and each timepoint (for all an equal size)
-#' @param type is of "cross-sectional" (by default)  or "longitudinal" assigns the type of data (2 or 3 level nested structure)
+#' @param type is of cross-sectional (by default)  or longitudinal assigns the type of data (2 or 3 level nested structure)
 #' @param time a logical (FALSE, if no time trends are expected, otherwise TRUE) is only relevant for evaluation of cross-sectional data
 #' @return Aproximated power of two tailed test, although the design matrix is fractionated, then power is not valid
 #' formula used for cross-sectional data provided by Michael A. Hussey and James P. Hughes,
@@ -32,11 +32,11 @@
 #' for(i in 1:dim(DM)[2]){
 #' DM.new<-cbind(DM.new,DM[,i], DM[,i])
 #' }
-#' sigma.e <- sqrt(7/10)
-#' sigma <- sqrt(2/10)
-#' sigma.alpha <- sqrt(1/10 )
+#' s.e <- sqrt(7/10)
+#' s <- sqrt(2/10)
+#' s.a <- sqrt(1/10 )
 #' K<- 10 #number of participants within each 'cell'
-#' calcPower.SWD(ThetaEst=1, Design=DM.new, tauq=sigma.alpha^2, sigmaq=sigma^2, sigmaq.error =sigma.e^2,  noSub=K, type="longitudinal")
+#' calcPower.SWD(ThetaEst=1, Design=DM.new, s.a^2, s^2, s.e^2,  noSub=K,  type="longitudinal")
 #' @export
 calcPower.SWD<-function(ThetaEst,alpha=0.05, Design, sigmaq,  tauq, sigmaq.error =NULL,  noSub=NULL, time=TRUE, type="cross-sectional"){
   
