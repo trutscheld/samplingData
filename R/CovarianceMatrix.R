@@ -1,4 +1,4 @@
-#' covariance matrix for the multivriate normal distributed variables
+#' covariance matrix for the multivariate normal distributed variables
 #' 
 #' @description covariance matrix of the normal distribution under cluster randomized study type given a design and a type
 #' @param K number of timepoints or measurments (design parameter)
