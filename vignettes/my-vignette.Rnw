@@ -6,6 +6,7 @@
 %\VignetteDepends{lme4} 
 % \VignetteKeywords{TODO: sampling, multidimensional normal distribution, study design, cluster randomized}
 % \VignetteEngine{knitr::knitr}
+%\VignetteEncoding{UTF-8}
 
 \usepackage[a4paper, total={6.5in, 9in}]{geometry}
 %\usepackage[a4paper, total={6in, 8in}]{geometry}
