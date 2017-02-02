@@ -1,7 +1,7 @@
 Package: samplingDataCRT
 Version: 1.0
 Type: Package
-Title: Sampling Data Within Different Study Designs For Cluster Randomized Trials
+Title: Sampling Data Within Different Study Designs for Cluster Randomized Trials
 Date: 2017-01-20
 Author: Diana Trutschel, Hendrik Treutler
 Maintainer: Diana Trutschel <Diana.Trutschel@dzne.de>

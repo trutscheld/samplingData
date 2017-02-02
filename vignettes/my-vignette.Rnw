@@ -965,7 +965,7 @@ V<-CovMat.Design(K, J, I, sigma.1.q=sigma.1, sigma.2.q=sigma.2, sigma.3.q=sigma.
 sample.data<-sampleData(type = "long", K=K,J=J,I=I, D=D, V=V, parameters=parameters)
 
 #need the lme4 package for analysis
-lme4::lmer(val~intervention+measurement + (1|cluster)+(1|subject), data=sample.data)
+lmer(val~intervention+measurement + (1|cluster)+(1|subject), data=sample.data)
 @
 
 <<Sample data parallel simulation, echo=FALSE, message=FALSE>>=
@@ -1010,7 +1010,7 @@ V<-CovMat.Design(K, J, I, sigma.1.q=sigma.1, sigma.2.q=sigma.2, sigma.3.q=sigma.
 sample.data<-sampleData(type = "long", K=K,J=J,I=I, D=D, V=V, parameters=parameters)
 
 #analysis of the three-level data
-lme4::lmer(val~intervention+measurement + (1|cluster)+(1|subject), data=sample.data)
+lmer(val~intervention+measurement + (1|cluster)+(1|subject), data=sample.data)
 
 @
 
@@ -1058,7 +1058,7 @@ V<-CovMat.Design(K, J, I, sigma.1=sigma.1, sigma.3=sigma.3)
 sample.data<-sampleData(type = "cross-sec", K=K,J=J,I=I, D=D, V=V, parameters=parameters)
 
 #analysis of the two-leveldata
-lme4::lmer(val~intervention+measurement + (1|cluster), data=sample.data)
+lmer(val~intervention+measurement + (1|cluster), data=sample.data)
 
 @
 
