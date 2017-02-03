@@ -1,7 +1,7 @@
 
 \documentclass{article}
 
-% \VignetteIndexEntry{Vignette to package 'samplingDataCRT'}
+% \VignetteIndexEntry{Using samplingDataCRT}
 % \VignettePackage{samplingDataCRT}
 %\VignetteDepends{lme4} 
 % \VignetteKeywords{TODO: sampling, multidimensional normal distribution, study design, cluster randomized}
